@@ -10,29 +10,40 @@ class CardDeckTest:
         self.window = Tk()
         self.height = 110
         self.width = 80
+        self.window.title("지랄좀")
 
 
         self.deck = [x for x in range(0,52)]
 
         self.shuffleCard()
 
-        Button(self.window,text="Shuffle",command=self.shuffleCard).grid(row=1,column=0,columnspan=5)
+        Button(self.window,text="Shuffle",command=self.shuffleCard).grid(row=1,column=0,columnspan=2)
+        Button(self.window,text="Sort",command=self.sortCard).grid(row=1,column=3,columnspan=2)
 
         self.window.mainloop()
 
 
     def shuffleCard(self):
-        self.card = []
         random.shuffle(self.deck)
+        self.displayCard(self.deck)
+
+    
+    def sortCard(self):
+        currentDeck = []
         for i in range(5):
-            self.card.append(Image.open("card\c"+str(self.deck[i])+".png"))
+            currentDeck.append(self.deck[i])
+        currentDeck.sort()
+        self.displayCard(currentDeck)
+
+
+    def displayCard(self, deck):
+        self.card = []
+        for i in range(5):
+            self.card.append(Image.open("card\c"+str(deck[i])+".png"))
             self.card[i] = self.card[i].resize((self.width, self.height))
             self.card[i] = ImageTk.PhotoImage(self.card[i])
             Label(self.window, image=self.card[i]).grid(row=0,column=i)
-    
-    def sortCard(self):
-        pass
-        # self.card
+
 
 
 CardDeckTest()

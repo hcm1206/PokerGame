@@ -10,7 +10,7 @@ class CardDeckTest:
         self.window = Tk()
         self.height = 110
         self.width = 80
-        self.window.title("지랄좀")
+        self.window.title("Playing Cards")
 
 
         self.deck = [x for x in range(0,52)]
@@ -39,7 +39,7 @@ class CardDeckTest:
     def displayCard(self, deck):
         self.card = []
         for i in range(5):
-            self.card.append(Image.open("card\c"+str(deck[i])+".png"))
+            self.card.append(Image.open("card\d"+str(deck[i])+".png"))
             self.card[i] = self.card[i].resize((self.width, self.height))
             self.card[i] = ImageTk.PhotoImage(self.card[i])
             Label(self.window, image=self.card[i]).grid(row=0,column=i)

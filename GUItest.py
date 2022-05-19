@@ -45,7 +45,6 @@ class CardDeckTest:
             Label(self.window, image=self.card[i]).grid(row=0,column=i)
 
 
-
 CardDeckTest()
 
 

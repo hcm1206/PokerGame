@@ -25,3 +25,4 @@ def check1():
 
 
     #print("숫자"+str(carddiv))
+    # 2022-05-22

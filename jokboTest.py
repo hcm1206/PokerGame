@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import random
 from tkinter import *
 from PIL import ImageTk, Image
@@ -73,7 +72,6 @@ for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
 
 window.mainloop() # GUI 실행
 
-=======
 import random
 from tkinter import *
 from PIL import ImageTk, Image
@@ -148,4 +146,3 @@ for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
 
 window.mainloop() # GUI 실행
 
->>>>>>> c37920c865469611c4b7e8f392c65eba31acef5b

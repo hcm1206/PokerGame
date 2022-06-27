@@ -4,7 +4,7 @@
 import random
 
 # 카드 덱 리스트의 숫자를 처리하는 클래스
-class Cards():
+class Cards:
     # 52개의 카드 숫자 덱 리스트 생성
     def __init__(self):
         self.deck = [x for x in range(52)] # 0부터 51까지 숫자 리스트 생성

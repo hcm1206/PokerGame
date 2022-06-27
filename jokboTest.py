@@ -2,6 +2,8 @@ import random
 from tkinter import *
 from PIL import ImageTk, Image
 
+# 테스트용 파일. 족보 판정 테스트용
+
 # 실행하면 GUI로 랜덤한 5개의 패가 생성되고 터미널에 카드 정보와 스트레이트 판정 결과(True or False)가 각각 뜨게 되어있음
 # 이해하라고 친절하게 주석까지 달아놨으니 잘 보고 다른 족보 알고리즘들을 구현해오시오
 # 테스트하기 좋게 GUI까지 적용해놨으니까 나중에 다른 족보 테스트할 때 써도 됨

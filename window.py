@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from PIL import ImageTk, Image
-import Cards
+from Cards import *
 
 # 화면에 GUI로 표시할 내용이 포함된 클래스
 

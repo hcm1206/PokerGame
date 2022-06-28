@@ -21,14 +21,14 @@ class Display:
 
         self.cpuMoneyInfo = MoneyInfo()
         self.myMoneyInfo = MoneyInfo()
-        self.batting = False
+        self.Betting = False
 
 
 
         # UI에 표시할 정보
         self.yourMoney = 10000
         self.cpuMoney = 10000
-        self.batting = 0
+        self.Betting = 0
 
         # 게임 창의 각 프레임 구성
         self.cpuInfoFrame = Frame(window)
@@ -44,8 +44,8 @@ class Display:
         # 버튼 생성
         foldBtn = Button(self.buttonFrame, text="폴드", command=self.confirmFoldGame)
         foldBtn.grid(row=0,column=1)
-        battingBtn = Button(self.buttonFrame, text="배팅하기", command=self.battingMoney)
-        battingBtn.grid(row=0,column=2)
+        BettingBtn = Button(self.buttonFrame, text="배팅하기", command=self.BettingMoney)
+        BettingBtn.grid(row=0,column=2)
         foldBtn = Button(self.buttonFrame, text="체크", command=self.confirmCheckGame)
         foldBtn.grid(row=0,column=3)
         foldBtn = Button(self.buttonFrame, text="올인", command=self.confirmAllInGame)
@@ -119,8 +119,8 @@ class Display:
     def confirmRestartGame(self):
         gameRestart = tkinter.messagebox.askokcancel("게임 재시작", "게임을 재시작 하시겠습니까?")
         if gameRestart:
-            self.cpuMoneyInfo.addMoney(self.cpuMoneyInfo.getTotalBatting())
-            self.myMoneyInfo.addMoney(self.myMoneyInfo.getTotalBatting())
+            self.cpuMoneyInfo.addMoney(self.cpuMoneyInfo.getTotalBetting())
+            self.myMoneyInfo.addMoney(self.myMoneyInfo.getTotalBetting())
             self.initGame()
 
     # 게임 초기화 (0턴으로 돌리기)
@@ -149,7 +149,7 @@ class Display:
     # 게임 시작 (1턴)
     def startGame(self):
         self.turn = 1
-        self.batting = False
+        self.Betting = False
         self.cpuMoneyInfo.blind()
         self.myMoneyInfo.blind()
         self.updateInfo()
@@ -161,11 +161,11 @@ class Display:
 
     # 게임 진행 (2턴~4턴)
     def nextGame(self):
-        if self.batting == False:
+        if self.Betting == False:
             tkinter.messagebox.showwarning("알림", "배팅 또는 폴드를 진행해주세요.")
             return
         self.turn += 1
-        self.batting = False
+        self.Betting = False
         # 현재 2턴이면 공용카드 3장 공개
         if self.turn == 2:
             for i in range(3):
@@ -179,7 +179,7 @@ class Display:
     # 게임 결과 보기 (5턴)
     def resultGame(self):
         self.turn = 5
-        self.batting = False
+        self.Betting = False
         Button(self.buttonFrame, text="결과 정산", command=self.endGame, width=8, bg="lime").grid(row=0,column=0)
         for i in range(2):
             Label(self.cpuCardFrame, image=self.cpuCards[i]).grid(row=0,column=i)
@@ -205,7 +205,7 @@ class Display:
         self.myMoneyInfo.allIn()
         self.cpuMoneyInfo.allIn()
         self.updateInfo()
-        self.batting = True
+        self.Betting = True
         for i in range(5):
             Label(self.commonCardFrame, image=self.commonCards[i]).grid(row=0,column=i)
         for i in range(2):
@@ -231,53 +231,53 @@ class Display:
             self.quitGame()
 
     def endGame(self):
-        totalBatting = self.cpuMoneyInfo.getTotalBatting() + self.myMoneyInfo.getTotalBatting()
-        self.myMoneyInfo.addMoney(totalBatting)
+        totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
+        self.myMoneyInfo.addMoney(totalBetting)
         self.myMoneyInfo.newGame()
         self.cpuMoneyInfo.newGame()
         self.updateInfo()
-        tkinter.messagebox.showinfo("게임 승리", str(totalBatting) + "을 획득하였습니다.")
+        tkinter.messagebox.showinfo("게임 승리", str(totalBetting) + "을 획득하였습니다.")
         Button(self.buttonFrame, text="새 게임", command=self.confirmInitGame, width=8, bg="yellow").grid(row=0,column=0)
     
 
 
-    def battingMoney(self):
+    def BettingMoney(self):
         if 1 > self.turn or self.turn > 4:
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 배팅이 가능합니다.")
             return
         while(1):
-            battingAmount = tkinter.simpledialog.askinteger("배팅액 입력", "배팅액을 입력하세요")
+            BettingAmount = tkinter.simpledialog.askinteger("배팅액 입력", "배팅액을 입력하세요")
             try:
-                if int(battingAmount) < self.myMoneyInfo.getMinimumBatting():
-                    tkinter.messagebox.showwarning("알림", "최소 " + str(self.myMoneyInfo.getMinimumBatting()) + "이상 배팅하셔야 합니다.")
-                    print(battingAmount)
+                if int(BettingAmount) < self.myMoneyInfo.getMinimumBetting():
+                    tkinter.messagebox.showwarning("알림", "최소 " + str(self.myMoneyInfo.getMinimumBetting()) + "이상 배팅하셔야 합니다.")
+                    print(BettingAmount)
                     continue
-                elif battingAmount == self.myMoneyInfo.getMoney():
+                elif BettingAmount == self.myMoneyInfo.getMoney():
                     self.confirmAllInGame()
                     return
-                elif int(battingAmount) > self.myMoneyInfo.getMoney():
+                elif int(BettingAmount) > self.myMoneyInfo.getMoney():
                     tkinter.messagebox.showwarning("알림", "현재 소지 금액을 초과하였습니다.")
                     continue
                 else:
-                    confirmBatting = tkinter.messagebox.askokcancel("배팅", str(battingAmount) + "을 배팅하시겠습니까?")
-                    if confirmBatting:
+                    confirmBetting = tkinter.messagebox.askokcancel("배팅", str(BettingAmount) + "을 배팅하시겠습니까?")
+                    if confirmBetting:
                         break
                     else:
                         continue
             except:
                 return
         
-        self.myMoneyInfo.addBatting(battingAmount)
-        self.cpuMoneyInfo.addBatting(battingAmount)
+        self.myMoneyInfo.addBetting(BettingAmount)
+        self.cpuMoneyInfo.addBetting(BettingAmount)
         self.updateInfo()
-        self.batting = True
+        self.Betting = True
         self.nextGame()
 
     def checkGame(self):
-        self.myMoneyInfo.addBatting(self.myMoneyInfo.getMinimumBatting())
-        self.cpuMoneyInfo.addBatting(self.cpuMoneyInfo.getMinimumBatting())
+        self.myMoneyInfo.addBetting(self.myMoneyInfo.getMinimumBetting())
+        self.cpuMoneyInfo.addBetting(self.cpuMoneyInfo.getMinimumBetting())
         self.updateInfo()
-        self.batting = True
+        self.Betting = True
         self.nextGame()
     
     def confirmCheckGame(self):
@@ -293,16 +293,16 @@ class Display:
     def updateInfo(self):
         # CPU의 정보 창
         self.cpuMoney = Label(self.cpuInfoFrame, text="상대의 총액 : " + str(self.cpuMoneyInfo.getMoney()), width=20)
-        self.cpuBatting = Label(self.cpuInfoFrame, text="상대의 배팅액 : " + str(self.cpuMoneyInfo.getTotalBatting()), width=20)
+        self.cpuBetting = Label(self.cpuInfoFrame, text="상대의 배팅액 : " + str(self.cpuMoneyInfo.getTotalBetting()), width=20)
         self.cpuMoney.grid(row=0,column=0)
-        self.cpuBatting.grid(row=0,column=1)
+        self.cpuBetting.grid(row=0,column=1)
         # 사용자의 정보 창
         self.myMoney = Label(self.myInfoFrame, text="당신의 총액 : " + str(self.myMoneyInfo.getMoney()), width=20)
-        self.minimumBatting = Label(self.myInfoFrame, text="최소 배팅액 : " + str(self.myMoneyInfo.getMinimumBatting()), width=20)
-        self.myBatting = Label(self.myInfoFrame, text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBatting()), width=20)
+        self.minimumBetting = Label(self.myInfoFrame, text="최소 배팅액 : " + str(self.myMoneyInfo.getMinimumBetting()), width=20)
+        self.myBetting = Label(self.myInfoFrame, text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBetting()), width=20)
         self.myMoney.grid(row=0,column=0)
-        self.minimumBatting.grid(row=0,column=1)
-        self.myBatting.grid(row=0,column=2)
+        self.minimumBetting.grid(row=0,column=1)
+        self.myBetting.grid(row=0,column=2)
 
     
 

@@ -12,6 +12,12 @@ class Display:
         window = Tk()
         window.title("Poker Game")
 
+        mainMenu = Menu(window)
+        window.configure(menu = mainMenu)
+
+        mainMenu.add_cascade(label="게임 초기화", command=self.confirmInitMoney)
+
+
         # 카드 이미지 크기 설정
         self.height = 110
         self.width = 80
@@ -173,8 +179,6 @@ class Display:
         # 현재 3턴 또는 4턴이면 공용카드 1장 공개
         else:
             Label(self.commonCardFrame, image=self.commonCards[self.turn]).grid(row=0,column=self.turn)
-        if self.turn >= 4:
-            Button(self.buttonFrame, text="결과 보기", command=self.resultGame, width=8, bg="lime").grid(row=0,column=0)
 
     # 게임 결과 보기 (5턴)
     def resultGame(self):
@@ -196,8 +200,8 @@ class Display:
         if (1 > self.turn or self.turn > 4):
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 폴드가 가능합니다.")
             return
-        gameQuit = tkinter.messagebox.askokcancel("폴드", "이번 게임을 폴드하시겠습니까?")
-        if gameQuit:
+        foldGame = tkinter.messagebox.askokcancel("폴드", "이번 게임을 폴드하시겠습니까?")
+        if foldGame:
             self.foldGame()
 
     def AllInGame(self):
@@ -216,8 +220,8 @@ class Display:
         if (1 > self.turn or self.turn > 4):
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 올인이 가능합니다.")
             return
-        gameQuit = tkinter.messagebox.askokcancel("올인", "이번 게임에 올인하시겠습니까?")
-        if gameQuit:
+        allInGame = tkinter.messagebox.askokcancel("올인", "이번 게임에 올인하시겠습니까?")
+        if allInGame:
             self.AllInGame()
 
     # 게임 종료 커맨드
@@ -237,7 +241,14 @@ class Display:
         self.cpuMoneyInfo.newGame()
         self.updateInfo()
         tkinter.messagebox.showinfo("게임 승리", str(totalBetting) + "을 획득하였습니다.")
-        Button(self.buttonFrame, text="새 게임", command=self.confirmInitGame, width=8, bg="yellow").grid(row=0,column=0)
+        if self.myMoneyInfo.getMoney() <= 0:
+            tkinter.messagebox.showinfo("파산", "소지 금액을 모두 잃었으므로 게임에서 패배하였습니다.")
+            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
+        elif self.cpuMoneyInfo.getMoney() <= 0:
+            tkinter.messagebox.showinfo("승리", "상대방의 소지 금액이 모두 소진되어 게임에서 승리하였습니다.")
+            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
+        else:
+            Button(self.buttonFrame, text="새 게임", command=self.confirmInitGame, width=8, bg="yellow").grid(row=0,column=0)
     
 
 
@@ -252,6 +263,9 @@ class Display:
                     tkinter.messagebox.showwarning("알림", "최소 " + str(self.myMoneyInfo.getMinimumBetting()) + "이상 배팅하셔야 합니다.")
                     print(BettingAmount)
                     continue
+                elif BettingAmount == 0:
+                    self.confirmCheckGame()
+                    return
                 elif BettingAmount == self.myMoneyInfo.getMoney():
                     self.confirmAllInGame()
                     return
@@ -271,21 +285,26 @@ class Display:
         self.cpuMoneyInfo.addBetting(BettingAmount)
         self.updateInfo()
         self.Betting = True
+        if self.turn >= 4:
+            Button(self.buttonFrame, text="결과 보기", command=self.resultGame, width=8, bg="lime").grid(row=0,column=0)
+            self.turn = 5
+            return
         self.nextGame()
 
     def checkGame(self):
-        self.myMoneyInfo.addBetting(self.myMoneyInfo.getMinimumBetting())
-        self.cpuMoneyInfo.addBetting(self.cpuMoneyInfo.getMinimumBetting())
-        self.updateInfo()
         self.Betting = True
+        if self.turn >= 4:
+            Button(self.buttonFrame, text="결과 보기", command=self.resultGame, width=8, bg="lime").grid(row=0,column=0)
+            self.turn = 5
+            return
         self.nextGame()
     
     def confirmCheckGame(self):
         if (1 > self.turn or self.turn > 4):
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 체크가 가능합니다.")
             return
-        gameQuit = tkinter.messagebox.askokcancel("체크", "체크하시겠습니까?")
-        if gameQuit:
+        checkGame = tkinter.messagebox.askokcancel("체크", "체크하시겠습니까?")
+        if checkGame:
             self.checkGame()
 
 
@@ -298,13 +317,22 @@ class Display:
         self.cpuBetting.grid(row=0,column=1)
         # 사용자의 정보 창
         self.myMoney = Label(self.myInfoFrame, text="당신의 총액 : " + str(self.myMoneyInfo.getMoney()), width=20)
-        self.minimumBetting = Label(self.myInfoFrame, text="최소 배팅액 : " + str(self.myMoneyInfo.getMinimumBetting()), width=20)
+        self.minimumBetting = Label(self.myInfoFrame, text="블라인드 : " + str(self.myMoneyInfo.getBlindAmount()), width=20)
         self.myBetting = Label(self.myInfoFrame, text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBetting()), width=20)
         self.myMoney.grid(row=0,column=0)
         self.minimumBetting.grid(row=0,column=1)
         self.myBetting.grid(row=0,column=2)
 
+    def initMoney(self):
+        self.myMoneyInfo.initMoney()
+        self.cpuMoneyInfo.initMoney()
+        self.initGame()
     
+    def confirmInitMoney(self):
+        initGame = tkinter.messagebox.askokcancel("게임 초기화", "현재 게임 진행 및 잔금을 초기화하시겠습니까?")
+        if initGame:
+            self.initMoney()
+
 
 
 

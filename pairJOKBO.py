@@ -22,7 +22,7 @@ def fourcard(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
             print("이건 트리플")
             return True
         
-        elif(numList2.count(i)==2 and numList2.count(i+1)==2): # 원페어
+        elif(numList2.count(i)==2 and numList2.count(i+1)==2): # 투페어
             print(numList2.count(i))
             print("이건 투페어")
             return True

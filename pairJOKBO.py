@@ -9,7 +9,7 @@ def fourcard(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
 
     curNum3 = numList2[0] # 현재에서는 1이 저장
 
-    for i in range(0,len(numList2)): 
+    for i in range(1,len(numList2)): 
         if(numList2.count(i)==4): # 포카드
             print(numList2.count(i))
             print("이건 포카드")
@@ -22,10 +22,12 @@ def fourcard(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
             print(numList2.count(i))
             print("이건 원페어")
             return True
-        elif(numList2.count(i)<=0): # 이건 노페어
+        
+        elif(numList2.count(i)>=0): # 이건 노페어
             print(numList2.count(i))
             print("카드 족보싸움")
             return True
+        
         '''
         elif(numList2.count(i)==2 and check):
             print(numList2.count(i))
@@ -40,7 +42,7 @@ deck=[4,5,6,7,21,16,15] # 문제의 7개 카드
 #1,1,2,2,5,4,3
 #s2 , h2 , c2 , d2 + h6,s5,d4
 #4로 나눈다면 numlist에는 [1,1,1,1,5,4,3] 이렇게 옴 
-deck2=[6,17,20,27,28,29,33]
-#얘는 [1,4,5,6,7,7,8]
+deck2=[6,17,20,27,28,29,30]
+#얘는 [1,4,5,6,7,7,7]
 print(fourcard(deck))
 print(fourcard(deck2))

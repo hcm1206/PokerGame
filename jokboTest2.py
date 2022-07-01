@@ -16,7 +16,7 @@ def straightFlush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 
     checkList = []
     score = -1
     straight = False
-    for i in range(1,len(deck)): # 1부터 6까지 반복
+    for i in range(len(deck)): # 6까지 반복
         if (curCard + 4) // 4 == deck[i] // 4:
             count += 1 # 카운트를 1 올림
             if i == 1:
@@ -85,9 +85,11 @@ def fullHouse(deck):
 def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패가 스트레이트이면 True, 아니면 False 반환
     deck.sort() # 먼저 입력받은 패를 정렬
     shapeList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
+    numList = []
     score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         shapeList.append(card % 4) # 패의 7장의 카드들의 숫자 저장
+        numList.append(card // 4)
         # 모듈러 연산을 해 나머지를 본다
     
     # 여기까지 하면 numList 리스트에는 패에 있는 7장의 카드들의 숫자들이 리스트로 저장되어 있음
@@ -99,8 +101,14 @@ def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패�
 
     for i in range (4):
         if(shapeList.count(i)>=5):
-            score = 600 + 1
+            shape = i
+            score = 600
     
+    if score == 600:
+        for card in deck:
+            if card % 4 == shape:
+                numList.append(card // 4)
+        score += max(numList)+1
     return score
 
 # 스트레이트 체크
@@ -119,14 +127,14 @@ def straight(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
         if curNum + 1 == numList[i]: # 만약 현재 카드 숫자에서 1을 더한 값이 다음 카드 숫자와 같다면 (ex. 현재 카드 숫자(curNum)가 2인데 다음 카드 숫자(numList[i]가 3이면)
             count += 1 # 카운트를 1 올림
             curNum = numList[i] # 다음 카드 숫자를 현재 카드 숫자로 바꿈 (ex. 현재 카드 숫자(curNum)를 2에서 3으로 바꿈)
-            num = curNum
+            num = curNum + 1
         elif curNum == numList[i]: # 현재 카드 숫자와 다음 카드 숫자가 같다면 (ex. 현재 카드 숫자(curNum)이 2인데 다음 카드 숫자(numList[i])도 2라면)
             pass # 아무것도 건들지 말고 그냥 통과
         else: # 다음 카드 숫자가 아예 다른 값이라면 (ex. 현재 카드 숫자(curNum)이 2인데 다음 카드 숫자(numList[i])가 5라면)
             count = 1 # 카운트 초기화
             curNum = numList[i] # 다음 카드 숫자를 현재 카드 숫자로 바꿈 (ex. 현재 카드 숫자(curNum)를 2에서 5로 바꿈)
         if count >= 5: # 카운트가 5가 넘었다면 (숫자들이 5개 연속으로 1씩 차이가 난다면)
-            score += 500 + num + 2
+            score += 500 + num + 1
     
     return score
 
@@ -143,7 +151,7 @@ def triple(deck):
 
     for i in range(13): 
         if(numList.count(i)==3): # 트리플
-            score += 400 + i + 1
+            score += 400 + i + 2
     return score
 
 # 투페어 체크
@@ -159,6 +167,8 @@ def twoPair(deck):
 
     for i in range(13): 
         if(numList.count(i)==2):
+            if i == 1:
+                num = 13
             if i > num:
                 num = i
             count += 1
@@ -200,7 +210,7 @@ def checkJokbo(deck):
     elif straight(deck) != -1:
         score = straight(deck)
     elif triple(deck) != -1:
-        scpre = triple(deck)
+        score = triple(deck)
     elif twoPair(deck) != -1:
         score = twoPair(deck)
     elif onePair(deck) != -1:
@@ -232,12 +242,6 @@ testDeck3 = [10,13,17,18,21,25,29]
 debugDeck = [6,25,29,30,31,35,41]
 
 
-print(straightFlush(debugDeck))
-print(straightFlush(testDeck2))
-print(straightFlush(testDeck3))
-
-print()
-
 deck = [x for x in range(52)] # 카드 덱 생성
 cardImgs = [] # 카드 이미지 객체 저장할 이차원 리스트 생성 (GUI용)
 
@@ -252,9 +256,7 @@ for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
         cardImgs[i][j] = cardImgs[i][j].resize((width,height))
         cardImgs[i][j] = ImageTk.PhotoImage(cardImgs[i][j])
         Label(window, image=cardImgs[i][j]).grid(row=i,column=j)
-    # 족보 테스트 시 이 아래 부분만 바꾸면 됨 ++++++++++++++++++++++++++++++++++
     resultText = checkJokbo(select)
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     Label(window, text=resultText[0] + "\nscore : " + str(resultText[1]), width=15).grid(row=i,column=7)
     # 여기까지 GUI용 ========================================================
     print(select) # 카드 번호 리스트 출력

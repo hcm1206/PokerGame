@@ -14,7 +14,7 @@ def straightFlush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 
     curCard = deck[0]
     count = 1
     checkList = []
-    straightFlush = False
+    score = -1
     straight = False
     for i in range(1,len(deck)): # 1부터 6까지 반복
         if (curCard + 4) // 4 == deck[i] // 4:
@@ -23,11 +23,9 @@ def straightFlush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 
                 checkList.append(curCard)
             checkList.append(deck[i])
             curCard = deck[i]
+            num = (deck[i] // 4)
         elif curCard // 4 == deck[i] // 4:
-            if i == 1:
-                checkList.append(curCard)
             checkList.append(deck[i])
-            curCard = deck[i]
         else: 
             count = 1 # 카운트 초기화
             curCard = deck[i]
@@ -40,9 +38,9 @@ def straightFlush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 
             shapeList.append(card%4)
         for i in range(4):
             if(shapeList.count(i)>=5):
-                straightFlush = True
+                score = 900 + num + 2
 
-    return straightFlush
+    return score
         
         
 
@@ -52,38 +50,42 @@ def straightFlush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 
 def fourCard(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
+    score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(1,13): 
+    for i in range(13): 
         if(numList.count(i)==4): # 포카드
-            return True 
-    return False
+            score = 800 + i + 1
+    return score
 
 def fullHouse(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
     triple = False
     pair = False
+    score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(1,13): 
+    for i in range(13): 
         if(numList.count(i)==3):
             triple = True
+            num = i
         elif(numList.count(i)==2):
             pair = True
         if (triple and pair):
-            return True
-    return False
+            score = 700 + num + 1
+    return score
 
 
-# 플러시 체크
+# 플러시 체크 (플러시는 아직 숫자 판정 없음, 무조건 A로 판정)
 def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패가 스트레이트이면 True, 아니면 False 반환
     deck.sort() # 먼저 입력받은 패를 정렬
     shapeList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
+    score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         shapeList.append(card % 4) # 패의 7장의 카드들의 숫자 저장
         # 모듈러 연산을 해 나머지를 본다
@@ -97,14 +99,15 @@ def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패�
 
     for i in range (4):
         if(shapeList.count(i)>=5):
-            return True
+            score = 600 + 1
     
-    return False
+    return score
 
 # 스트레이트 체크
 def straight(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패가 스트레이트이면 True, 아니면 False 반환
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
+    score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
     
@@ -116,15 +119,16 @@ def straight(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
         if curNum + 1 == numList[i]: # 만약 현재 카드 숫자에서 1을 더한 값이 다음 카드 숫자와 같다면 (ex. 현재 카드 숫자(curNum)가 2인데 다음 카드 숫자(numList[i]가 3이면)
             count += 1 # 카운트를 1 올림
             curNum = numList[i] # 다음 카드 숫자를 현재 카드 숫자로 바꿈 (ex. 현재 카드 숫자(curNum)를 2에서 3으로 바꿈)
+            num = curNum
         elif curNum == numList[i]: # 현재 카드 숫자와 다음 카드 숫자가 같다면 (ex. 현재 카드 숫자(curNum)이 2인데 다음 카드 숫자(numList[i])도 2라면)
             pass # 아무것도 건들지 말고 그냥 통과
         else: # 다음 카드 숫자가 아예 다른 값이라면 (ex. 현재 카드 숫자(curNum)이 2인데 다음 카드 숫자(numList[i])가 5라면)
             count = 1 # 카운트 초기화
             curNum = numList[i] # 다음 카드 숫자를 현재 카드 숫자로 바꿈 (ex. 현재 카드 숫자(curNum)를 2에서 5로 바꿈)
         if count >= 5: # 카운트가 5가 넘었다면 (숫자들이 5개 연속으로 1씩 차이가 난다면)
-            return True # 얘는 스트레이트다! ☆★☆ 빰빰빰 ☆★☆
+            score += 500 + num + 2
     
-    return False # 응 얘 스트레이트 아님 ㅅㄱ
+    return score
 
 
 
@@ -132,63 +136,84 @@ def straight(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
 def triple(deck): 
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
+    score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(1,13): 
+    for i in range(13): 
         if(numList.count(i)==3): # 트리플
-            return True 
-    return False
+            score += 400 + i + 1
+    return score
 
 # 투페어 체크
 def twoPair(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
     count = 0
+    score = -1
+    num = 0
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(1,13): 
+    for i in range(13): 
         if(numList.count(i)==2):
+            if i > num:
+                num = i
             count += 1
             if count >= 2:
-                return True
-    return False
+                score = 300 + num + 1
+    return score
 
 def onePair(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
+    score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(1,13): 
+    for i in range(13): 
         if(numList.count(i)==2):
-            return True
-    return False
+            score = 200 + i + 1
+    return score
+
+def noPair(deck):
+    deck.sort()
+    return 100 + max(deck) // 4 + 1
 
 
 def checkJokbo(deck):
-    if straightFlush(deck):
-        return "스트레이트 플러시"
-    if fourCard(deck):
-        return "포카드"
-    elif fullHouse(deck):
-        return "풀하우스"
-    elif flush(deck):
-        return "플러시"
-    elif straight(deck):
-        return "스트레이트"
-    elif triple(deck):
-        return "트리플"
-    elif twoPair(deck):
-        return "투페어"
-    elif onePair(deck):
-        return "원페어"
+    score = 0
+    jokbo = ["노페어", "원페어", "투페어", "트리플", "스트레이트", "플러시", "풀하우스", "포카드", "스트레이트 플러시"]
+    num = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K",]
+
+    if straightFlush(deck) != -1:
+        score = straightFlush(deck)
+    elif fourCard(deck) != -1:
+        score = fourCard(deck)
+    elif fullHouse(deck) != -1:
+        score = fullHouse(deck)
+    elif flush(deck) != -1:
+        score = flush(deck)
+    elif straight(deck) != -1:
+        score = straight(deck)
+    elif triple(deck) != -1:
+        scpre = triple(deck)
+    elif twoPair(deck) != -1:
+        score = twoPair(deck)
+    elif onePair(deck) != -1:
+        score = onePair(deck)
     else:
-        return "노페어"
+        score = noPair(deck)
+    print(score)
+    strJokbo = jokbo[score // 100 - 1]
+    strJokbo += " " + num[(score % 100)-1]
+    numScore = score % 100
+    if numScore == 1:
+        score += 13
+    return strJokbo, score
 
 # 이거는 그냥 GUI 용 ======
 window = Tk()
@@ -204,12 +229,13 @@ width = 80
 testDeck = [6,17,20,27,28,29,33] # 임의의 스트레이트를 만족하는 테스트용 패 (c2, h5, s6, d7, s8, h8, h9)
 testDeck2 = [11,15,17,19,23,27,38]
 testDeck3 = [10,13,17,18,21,25,29]
+debugDeck = [6,25,29,30,31,35,41]
 
-print(straight(testDeck)) # 테스트용 패가 스트레이트임? (당연히 True 출력)
-print()
+
+print(straightFlush(debugDeck))
 print(straightFlush(testDeck2))
-print()
 print(straightFlush(testDeck3))
+
 print()
 
 deck = [x for x in range(52)] # 카드 덱 생성
@@ -229,13 +255,9 @@ for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
     # 족보 테스트 시 이 아래 부분만 바꾸면 됨 ++++++++++++++++++++++++++++++++++
     resultText = checkJokbo(select)
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    fontColor = "blue" if resultText != "노페어" else "black"
-    Label(window, text=resultText, fg=fontColor, width=15).grid(row=i,column=7)
+    Label(window, text=resultText[0] + "\nscore : " + str(resultText[1]), width=15).grid(row=i,column=7)
     # 여기까지 GUI용 ========================================================
     print(select) # 카드 번호 리스트 출력
-    print(straight(select)) # 스트레이트인지 판정 (스트레이트면 True, 아니면 False)
-    print()
 
 
 window.mainloop() # GUI 실행
-

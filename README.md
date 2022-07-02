@@ -1,5 +1,12 @@
 # PokerGame
-포커 게임 프로젝트
+### 포커 게임 프로젝트
+
+텍사스 홀덤 룰을 적용하여 컴퓨터와 포커 게임을 겨루는 프로그램입니다.
+
+<img width="334" alt="game" src="https://user-images.githubusercontent.com/96714275/176986733-09eb95f9-9e7b-4b6f-be5f-9cce96371dad.PNG">
+
+텍사스 홀덤 룰과 동일하게 자신의 패와 커뮤니티 카드 패를 보고 자신의 판돈을 결정하여 게임을 진행하는 방식입니다.
+
 
 *****
 
@@ -11,6 +18,9 @@ mnyu(조영재)
 *****
 
 ### 진행도(최근 1주)
+
+<img width="531" alt="ac" src="https://user-images.githubusercontent.com/96714275/176986618-eb4dc57e-35db-4d37-ac55-40ae30c12448.PNG">
+<b>현재 테스트 중인 족보 판정 파일</b>
 
 #### Changelogs 22-07-02
 - 족보 테스트 파일의 스트레이트 플러시 판정 버그를 비롯한 여러 메커니즘 오류를 수정하였습니다.

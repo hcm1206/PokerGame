@@ -4,6 +4,7 @@ import tkinter.simpledialog
 from PIL import ImageTk, Image
 from Cards import *
 from money import *
+from CheckJokbo import checkJokbo
 
 # 화면에 GUI로 표시할 내용이 포함된 클래스
 
@@ -36,13 +37,21 @@ class Display:
         self.cpuMoney = 10000
         self.Betting = 0
 
+
         # 게임 창의 각 프레임 구성
         self.cpuInfoFrame = Frame(window)
+        self.cpuMessageFrame = Frame(window)
         self.cpuCardFrame = Frame(window)
         self.commonCardFrame = Frame(window)
         self.myCardFrame = Frame(window)
+        self.myMessageFrame = Frame(window)
         self.buttonFrame = Frame(window)
         self.myInfoFrame = Frame(window)
+
+        self.cpuMessage = Label(self.cpuMessageFrame, text="", height=2)
+        self.myMessage = Label(self.myMessageFrame, text="", height=2)
+        self.cpuMessage.pack()
+        self.myMessage.pack()
 
         
         
@@ -50,7 +59,7 @@ class Display:
         # 버튼 생성
         foldBtn = Button(self.buttonFrame, text="폴드", command=self.confirmFoldGame)
         foldBtn.grid(row=0,column=1)
-        BettingBtn = Button(self.buttonFrame, text="배팅하기", command=self.BettingMoney)
+        BettingBtn = Button(self.buttonFrame, text="배팅", command=self.BettingMoney)
         BettingBtn.grid(row=0,column=2)
         foldBtn = Button(self.buttonFrame, text="체크", command=self.confirmCheckGame)
         foldBtn.grid(row=0,column=3)
@@ -65,9 +74,11 @@ class Display:
 
         # 게임 창의 각 프레임 출력
         self.cpuInfoFrame.pack()
+        self.cpuMessageFrame.pack()
         self.cpuCardFrame.pack()
         self.commonCardFrame.pack()
         self.myCardFrame.pack()
+        self.myMessageFrame.pack()
         self.buttonFrame.pack()
         self.myInfoFrame.pack()
 
@@ -75,7 +86,6 @@ class Display:
 
         
 
-        
 
         # 이미지 객체가 저장된 리스트 만들기
         self.myCards = self.displayCardofDeck(self.CardDeck.drawMyCard())
@@ -107,6 +117,8 @@ class Display:
         backCard = backCard.resize((self.width, self.height))
         backCard = ImageTk.PhotoImage(backCard)
         return backCard
+
+# ================================== 게임 진행 부분 ==============================================
     
     # 게임 진행은 총 6개의 턴으로 구분 (0턴~5턴)
     # 0턴 : 게임 준비 상태 (모든 카드 비공개 상태)
@@ -134,9 +146,11 @@ class Display:
         self.turn = 0
         self.myMoneyInfo.newGame()
         self.cpuMoneyInfo.newGame()
+        defaultbg = self.cpuInfoFrame.cget('bg')
+        self.cpuMessage.config(text = "", bg=defaultbg)
+        self.myMessage.config(text = "", bg=defaultbg)
         self.updateInfo()
-        self.CardDeck.index = 0
-        self.CardDeck.shuffleDeck()
+        self.CardDeck.initDeck()
         self.myCards = self.displayCardofDeck(self.CardDeck.drawMyCard())
         self.cpuCards = self.displayCardofDeck(self.CardDeck.drawCpuCard())
         self.commonCards = self.displayCardofDeck(self.CardDeck.drawInitCommonCard())
@@ -188,13 +202,82 @@ class Display:
         for i in range(2):
             Label(self.cpuCardFrame, image=self.cpuCards[i]).grid(row=0,column=i)
 
+
+    def endGame(self):
+        myFinalCards = self.CardDeck.getMyDeckCards() + self.CardDeck.getCommonDeckCards()
+        cpuFinalCards = self.CardDeck.getCpuDeckCards() + self.CardDeck.getCommonDeckCards()
+        myJokbo, self.myScore = checkJokbo(myFinalCards)
+        cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
+        self.myMessage.configure(text = myJokbo)
+        self.cpuMessage.configure(text = cpuJokbo)
+        self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
+        if self.myScore > self.cpuScore:
+            self.myMoneyInfo.addMoney(self.totalBetting)
+            self.myMessage.configure(bg="green")
+            self.cpuMessage.configure(bg="orange")
+        elif self.myScore < self.cpuScore:
+            self.cpuMoneyInfo.addMoney(self.totalBetting)
+            self.myMessage.configure(bg="orange")
+            self.cpuMessage.configure(bg="green")
+        else:
+            self.myMoneyInfo.addMoney(self.totalBetting//2)
+            self.cpuMoneyInfo.addMoney(self.totalBetting//2)
+            self.myMessage.configure(bg="orange")
+            self.cpuMessage.configure(bg="orange")
+        self.myMoneyInfo.newGame()
+        self.cpuMoneyInfo.newGame()
+        self.updateInfo()
+        self.showResult(self.myScore, self.cpuScore, self.totalBetting)
+        self.gameSet()
+    
+        
+        
+    
+    def showResult(self, myScore, cpuScore, totalBetting):
+        if myScore > cpuScore:
+            tkinter.messagebox.showinfo("판돈 확보 성공", str(totalBetting) + "을 획득하였습니다.")
+        elif myScore < cpuScore:
+            tkinter.messagebox.showinfo("핀돈 확보 실패", "상대방이 " + str(totalBetting) + "을 가져갑니다.")
+        else:
+            tkinter.messagebox.showinfo("무승부", "판돈의 절반 " + str(totalBetting//2) + "을 획득하였습니다.")
+
+
+    def gameSet(self):
+        if self.myMoneyInfo.getMoney() <= 0:
+            tkinter.messagebox.showinfo("파산", "소지 금액을 모두 잃었으므로 게임에서 패배하였습니다.")
+            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
+        elif self.cpuMoneyInfo.getMoney() <= 0:
+            tkinter.messagebox.showinfo("승리", "상대방의 소지 금액이 모두 소진되어 게임에서 승리하였습니다.")
+            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
+        else:
+            Button(self.buttonFrame, text="새 게임", command=self.confirmInitGame, width=8, bg="yellow").grid(row=0,column=0)
+    
+
+
+# ================================== 액션 부분 ==============================================
+
     def foldGame(self):
         self.turn = 5
         for i in range(5):
             Label(self.commonCardFrame, image=self.commonCards[i]).grid(row=0,column=i)
         for i in range(2):
             Label(self.cpuCardFrame, image=self.cpuCards[i]).grid(row=0,column=i)
-        Button(self.buttonFrame, text="결과 정산", command=self.endGame, width=8, bg="lime").grid(row=0,column=0)
+        Button(self.buttonFrame, text="결과 보기", command=self.foldGameResult, width=8, bg="lime").grid(row=0,column=0)
+
+    def foldGameResult(self):
+        myFinalCards = self.CardDeck.getMyDeckCards() + self.CardDeck.getCommonDeckCards()
+        cpuFinalCards = self.CardDeck.getCpuDeckCards() + self.CardDeck.getCommonDeckCards()
+        myJokbo, self.myScore = checkJokbo(myFinalCards)
+        cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
+        self.myMessage.configure(text = myJokbo)
+        self.cpuMessage.configure(text = cpuJokbo)
+        self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
+        self.cpuMoneyInfo.addMoney(self.totalBetting)
+        self.myMoneyInfo.newGame()
+        self.cpuMoneyInfo.newGame()
+        self.updateInfo()
+        tkinter.messagebox.showinfo("폴드", "상대방이 " + str(self.totalBetting) + "을 가져갑니다.")
+        self.gameSet()
 
     def confirmFoldGame(self):
         if (1 > self.turn or self.turn > 4):
@@ -234,21 +317,7 @@ class Display:
         if gameQuit:
             self.quitGame()
 
-    def endGame(self):
-        totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
-        self.myMoneyInfo.addMoney(totalBetting)
-        self.myMoneyInfo.newGame()
-        self.cpuMoneyInfo.newGame()
-        self.updateInfo()
-        tkinter.messagebox.showinfo("게임 승리", str(totalBetting) + "을 획득하였습니다.")
-        if self.myMoneyInfo.getMoney() <= 0:
-            tkinter.messagebox.showinfo("파산", "소지 금액을 모두 잃었으므로 게임에서 패배하였습니다.")
-            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
-        elif self.cpuMoneyInfo.getMoney() <= 0:
-            tkinter.messagebox.showinfo("승리", "상대방의 소지 금액이 모두 소진되어 게임에서 승리하였습니다.")
-            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
-        else:
-            Button(self.buttonFrame, text="새 게임", command=self.confirmInitGame, width=8, bg="yellow").grid(row=0,column=0)
+
     
 
 
@@ -307,7 +376,7 @@ class Display:
         if checkGame:
             self.checkGame()
 
-
+# =============================== 배팅 정보 수정 부분 =====================================
 
     def updateInfo(self):
         # CPU의 정보 창
@@ -333,6 +402,8 @@ class Display:
         if initGame:
             self.initMoney()
 
+    
 
+        
 
 

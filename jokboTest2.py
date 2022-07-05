@@ -18,12 +18,18 @@ testDeck2 = [11,15,17,19,23,27,38] # 스트레이트플러시 예제 1
 testDeck3 = [10,13,17,18,21,25,29] # 스트레이트플러시 예제 2
 testDeck4 = [0,10,36,40,43,44,48] # 로얄스트레이트플러시 예제
 debugDeck = [6,25,29,30,31,35,41] # 버그 수정용 덱
+debugDeck2 = [11,15,16,23,27,33,38]
+debugDeck3 = [4,22,26,30,42,46,49] # K 플러시 버그
 
 print(checkJokbo(testDeck2))
 print()
 print(checkJokbo(testDeck3))
 print()
 print(checkJokbo(testDeck4))
+print()
+print(checkJokbo(debugDeck2))
+print()
+print(checkJokbo(debugDeck3))
 print()
 
 

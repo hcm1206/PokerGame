@@ -49,7 +49,7 @@ def straightFlush(deck):
     for i in range(len(deck)): # 6까지 반복
         if (curCard + 4) // 4 == deck[i] // 4:
             count += 1 # 카운트를 1 올림
-            if i == 1:
+            if i == 0:
                 checkList.append(curCard)
             checkList.append(deck[i])
             curCard = deck[i]
@@ -158,6 +158,8 @@ def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패�
             if card % 4 == shape:
                 numList.append(card // 4)
         score += max(numList)+1
+        if 0 in numList:
+            score = 601
     return score
 
 # ========================== 스트레이트 구알고리즘 ===============================

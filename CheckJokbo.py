@@ -47,7 +47,7 @@ def straightFlush(deck):
     straight = False
 
     for i in range(len(deck)): # 6까지 반복
-        if (curCard + 4) // 4 == deck[i] // 4:
+        if (curCard + 4) // 4 == deck[i] // 4: # deck[12,16,20,24,28,9,13] = 8 스트레이트 플러쉬 28이 스페이드 8
             count += 1 # 카운트를 1 올림
             if i == 0:
                 checkList.append(curCard)
@@ -73,17 +73,18 @@ def straightFlush(deck):
 
 
     if straight:
-        score = 900 + num + 2
+        score = 900 + num + 1
     if set([0,9,10,11,12]) <= set(checkRoyalNumList):
         checkList = checkRoyalList
         score = 901
+        return score
 
     
 
     if score != -1:
         shapeList = []
         for card in checkList:
-            shapeList.append(card%4)
+            shapeList.append(card % 4) # 0,1,2,3 문양을 보겠다
         for i in range(4):
             if(shapeList.count(i)>=5):
                 return score
@@ -138,7 +139,6 @@ def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패�
     score = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         shapeList.append(card % 4) # 패의 7장의 카드들의 숫자 저장
-        numList.append(card // 4)
         # 모듈러 연산을 해 나머지를 본다
     
     # 여기까지 하면 numList 리스트에는 패에 있는 7장의 카드들의 숫자들이 리스트로 저장되어 있음
@@ -148,14 +148,14 @@ def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패�
     # shapeList.count(3) # 다이아
     # shapeList.count(0) # 스페이드
 
-    for i in range (4):
+    for i in range (4): 
         if(shapeList.count(i)>=5):
-            shape = i
-            score = 600
+            shape = i # shape에 i가 0이면 스페이드 , 1이면 하트 , 2면 클로버 , 3이면 다이아몬드
+            score = 600 # 플러쉬 점수를 600점 지급
     
-    if score == 600:
-        for card in deck:
-            if card % 4 == shape:
+    if score == 600: # 플러쉬 점수라면?
+        for card in deck: # 0부터 6까지 7번 반복
+            if card % 4 == shape: 
                 numList.append(card // 4)
         score += max(numList)+1
         if 0 in numList:
@@ -236,10 +236,12 @@ def twoPair(deck):
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(13): 
+    for i in range(14): 
         if(numList.count(i)==2):
             if i > num:
                 num = i
+            elif i == 0:
+                num += 13
             if i == 1:
                 num = 1
             count += 1
@@ -267,7 +269,7 @@ def noPair(deck):
 
 def checkJokbo(deck):
     jokbo = ["노페어", "원페어", "투페어", "트리플", "스트레이트", "플러시", "풀하우스", "포카드", "스트레이트 플러시"]
-    num = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K",]
+    num = ["A","2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
     score = getScore(deck)
 
     
@@ -305,5 +307,3 @@ def getScore(deck):
         return score
     score = noPair(deck)
     return score
-
- 

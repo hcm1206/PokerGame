@@ -66,7 +66,7 @@ def straightFlush(deck):
     
     
     for card in deck:
-        if (card // 4) in [0,9,10,11,12]:
+        if (card // 4) in [13,9,10,11,12]:
             checkRoyalList.append(card)
             checkRoyalNumList.append(card // 4)
 
@@ -74,7 +74,7 @@ def straightFlush(deck):
 
     if straight:
         score = 900 + num + 1
-    if set([0,9,10,11,12]) <= set(checkRoyalNumList):
+    if set([13,9,10,11,12]) <= set(checkRoyalNumList):
         checkList = checkRoyalList
         score = 901
         return score

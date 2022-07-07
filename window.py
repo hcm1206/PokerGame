@@ -391,6 +391,7 @@ class Display:
         self.Betting = True
         if self.turn >= 4:
             self.newGameBtn.config(text="결과 보기", command=self.resultGame, bg="lime")
+            self.makeButtonsGray()
             self.turn = 5
             return
         self.nextGame()
@@ -399,6 +400,7 @@ class Display:
         self.Betting = True
         if self.turn >= 4:
             self.newGameBtn.config(text="결과 보기", command=self.resultGame, bg="lime")
+            self.makeButtonsGray()
             self.turn = 5
             return
         self.nextGame()

@@ -227,35 +227,74 @@ class Display:
         cpuFinalCards = self.CardDeck.getCpuDeckCards() + self.CardDeck.getCommonDeckCards()
         myJokbo, self.myScore = checkJokbo(myFinalCards)
         cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
+        self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
+        myKicker = self.getKicker(self.CardDeck.getMyDeckCards())
+        cpuKicker = self.getKicker(self.CardDeck.getCpuDeckCards())
+
+        if self.myScore > self.cpuScore:
+            self.winGame()
+            
+        elif self.myScore < self.cpuScore:
+            self.loseGame()
+            
+        else:
+            if myKicker > cpuKicker:
+                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                self.winGame()
+            elif myKicker < cpuKicker:
+                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                self.loseGame()
+            else:
+                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                self.drawGame()
+
         self.myMessage.configure(text = myJokbo)
         self.cpuMessage.configure(text = cpuJokbo)
-        self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
-        if self.myScore > self.cpuScore:
-            self.myMoneyInfo.addMoney(self.totalBetting)
-            self.myMessage.configure(bg="green")
-            self.cpuMessage.configure(bg="orange")
-        elif self.myScore < self.cpuScore:
-            self.cpuMoneyInfo.addMoney(self.totalBetting)
-            self.myMessage.configure(bg="orange")
-            self.cpuMessage.configure(bg="green")
-        else:
-            self.myMoneyInfo.addMoney(self.totalBetting//2)
-            self.cpuMoneyInfo.addMoney(self.totalBetting//2)
-            self.myMessage.configure(bg="orange")
-            self.cpuMessage.configure(bg="orange")
         self.myMoneyInfo.newGame()
         self.cpuMoneyInfo.newGame()
         self.updateInfo()
-        self.showResult(self.myScore, self.cpuScore, self.totalBetting)
+        self.showResult(self.myScore, self.cpuScore, myKicker, cpuKicker, self.totalBetting)
         self.gameSet()
     
-        
+    
+    def winGame(self):
+        self.myMoneyInfo.addMoney(self.totalBetting)
+        self.myMessage.configure(bg="green")
+        self.cpuMessage.configure(bg="orange")
+    
+    def loseGame(self):
+        self.cpuMoneyInfo.addMoney(self.totalBetting)
+        self.myMessage.configure(bg="orange")
+        self.cpuMessage.configure(bg="green")
+
+    def drawGame(self):
+        self.myMoneyInfo.addMoney(self.totalBetting//2)
+        self.cpuMoneyInfo.addMoney(self.totalBetting//2)
+        self.myMessage.configure(bg="orange")
+        self.cpuMessage.configure(bg="orange")
+
+    
+    def getKicker(self, deck):
+        numList = []
+        for card in deck:
+            numList.append(card // 4)
+        if 0 in numList:
+            return 13
+        else:
+            return max(numList)
+
+    def changeKicker(self, num):
+        numList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+        return numList[num]
         
     
-    def showResult(self, myScore, cpuScore, totalBetting):
-        if myScore > cpuScore:
+    def showResult(self, myScore, cpuScore, myKicker, cpuKicker, totalBetting):
+        if (myScore > cpuScore) or ((myScore == cpuScore) and (myKicker > cpuKicker)):
             tkinter.messagebox.showinfo("판돈 확보 성공", str(totalBetting) + "을 획득하였습니다.")
-        elif myScore < cpuScore:
+        elif (myScore < cpuScore) or ((myScore == cpuScore) and (myKicker < cpuKicker)):
             tkinter.messagebox.showinfo("핀돈 확보 실패", "상대방이 " + str(totalBetting) + "을 가져갑니다.")
         else:
             tkinter.messagebox.showinfo("무승부", "판돈의 절반 " + str(totalBetting//2) + "을 획득하였습니다.")
@@ -433,6 +472,8 @@ class Display:
         initGame = tkinter.messagebox.askokcancel("게임 초기화", "현재 게임 진행 및 잔금을 초기화하시겠습니까?")
         if initGame:
             self.initMoney()
+
+    
 
     
 

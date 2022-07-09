@@ -11,28 +11,60 @@ window.title("Randomly Generated 5 Sets of 7 Cards")
 height = 110
 width = 80
 # =========================
+testDeck10 = [46,42,38,34,50,31,27] # 로얄스트레이트 플러쉬(A스트레이트 플러쉬로 표현)
 
+testDeck9 = [12,16,20,24,28,39,47] # 스트레이트 플러쉬
 
-testDeck = [6,17,20,27,28,29,33] # 임의의 스트레이트를 만족하는 테스트용 패 (c2, h5, s6, d7, s8, h8, h9)
-testDeck2 = [11,15,17,19,23,27,38] # 스트레이트플러시 예제 1
-testDeck3 = [10,13,17,18,21,25,29] # 스트레이트플러시 예제 2
-testDeck4 = [0,10,36,40,43,44,48] # 로얄스트레이트플러시 예제
-debugDeck = [6,25,29,30,31,35,41] # 버그 수정용 덱
-debugDeck2 = [11,15,16,23,27,33,38]
-debugDeck3 = [4,22,26,30,42,46,49] # K 플러시 버그
+testDeck = [20,21,22,23,14,25,35] # 포카드
 
+testDeck2 = [37,38,39,32,33,2,3] # 풀하우스
+
+testDeck3 = [19,35,39,43,45,3,15] # 플러시
+
+testDeck4 = [49,2,4,10,14,32,29] # 스트레이트
+
+testDeck5 = [1,2,3,5,16,17,18] # 트리플
+
+testDeck6 = [2, 6, 21, 31, 32, 40,41] # 원페어
+
+testDeck7 = [46,38,31,20,13,11,1] # 노페어
+
+testDeck8 = [34,35,48,49,10,13,24] # 투페어
+'''
+print(checkJokbo(testDeck10))
+print("정상적으로는 로얄(A)스트레이트 플러쉬 / 점수 : 913") # 성공
+print()
+print(checkJokbo(testDeck9))
+print("정상적으로는 9스트레이트 플러쉬 / 점수 : 908") # 성공
+print()
+print(checkJokbo(testDeck))
+print("정상적으로는 7포카드 / 점수 : 806") # 성공
+print()
 print(checkJokbo(testDeck2))
+print("정상적으로는 J풀하우스 / 점수 : 710") # 성공
 print()
 print(checkJokbo(testDeck3))
+print("정상적으로는 Q플러쉬 / 점수 : 611") # 성공
 print()
+'''
 print(checkJokbo(testDeck4))
+print("정상적으로는 A스트레이트 / 점수 : 513") # 성공
 print()
-print(checkJokbo(debugDeck2))
+'''
+print(checkJokbo(testDeck5))
+print("정상적으로는 6트리플 / 점수:405") # 성공
 print()
-print(checkJokbo(debugDeck3))
+print(checkJokbo(testDeck8))
+print("정상적으로는 A투페어 / 점수:313") # 성공
 print()
-
-
+print(checkJokbo(testDeck6))
+print("정상적으로는 Q원페어 / 점수:211") # 성공
+print()
+print(checkJokbo(testDeck7))
+print("정상적으로는 K노페어 / 점수:112") # 성공
+print()
+'''
+'''
 deck = [x for x in range(52)] # 카드 덱 생성
 cardImgs = [] # 카드 이미지 객체 저장할 이차원 리스트 생성 (GUI용)
 
@@ -55,3 +87,4 @@ for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
 
 
 window.mainloop() # GUI 실행
+'''

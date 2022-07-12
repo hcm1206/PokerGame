@@ -53,20 +53,39 @@ class Display:
         self.cpuMessage.pack()
         self.myMessage.pack()
 
-        
-        
 
+
+        # CPU의 정보 창
+        self.cpuMoney = Label(self.cpuInfoFrame, text="상대의 총액 : " + str(self.cpuMoneyInfo.getMoney()), width=20)
+        self.cpuBetting = Label(self.cpuInfoFrame, text="상대의 배팅액 : " + str(self.cpuMoneyInfo.getTotalBetting()), width=20)
+        self.cpuMoney.grid(row=0,column=0)
+        self.cpuBetting.grid(row=0,column=1)
+        # 사용자의 정보 창
+        self.myMoney = Label(self.myInfoFrame, text="당신의 총액 : " + str(self.myMoneyInfo.getMoney()), width=20)
+        self.minimumBetting = Label(self.myInfoFrame, text="블라인드 : " + str(self.myMoneyInfo.getBlindAmount()), width=20)
+        self.myBetting = Label(self.myInfoFrame, text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBetting()), width=20)
+        self.myMoney.grid(row=0,column=0)
+        self.minimumBetting.grid(row=0,column=1)
+        self.myBetting.grid(row=0,column=2)
+
+        
+        
         # 버튼 생성
-        foldBtn = Button(self.buttonFrame, text="폴드", command=self.confirmFoldGame)
-        foldBtn.grid(row=0,column=1)
-        BettingBtn = Button(self.buttonFrame, text="배팅", command=self.BettingMoney)
-        BettingBtn.grid(row=0,column=2)
-        foldBtn = Button(self.buttonFrame, text="체크", command=self.confirmCheckGame)
-        foldBtn.grid(row=0,column=3)
-        foldBtn = Button(self.buttonFrame, text="올인", command=self.confirmAllInGame)
-        foldBtn.grid(row=0,column=4)
-        newGameBtn = Button(self.buttonFrame, text="게임 종료", command=self.confirmQuitGame)
-        newGameBtn.grid(row=0,column=5)
+        self.newGameBtn = Button(self.buttonFrame, text="게임 시작", command=self.startGame, width=8, bg="cyan")
+        self.newGameBtn.grid(row=0,column=0)
+        self.foldBtn = Button(self.buttonFrame, text="폴드", bg="lightgray", command=self.confirmFoldGame)
+        self.foldBtn.grid(row=0,column=1)
+        self.BettingBtn = Button(self.buttonFrame, text="배팅", bg="lightgray", command=self.BettingMoney)
+        self.BettingBtn.grid(row=0,column=2)
+        self.checkBtn = Button(self.buttonFrame, text="체크", bg="lightgray", command=self.confirmCheckGame)
+        self.checkBtn.grid(row=0,column=3)
+        self.AllInBtn = Button(self.buttonFrame, text="올인", bg="lightgray", command=self.confirmAllInGame)
+        self.AllInBtn.grid(row=0,column=4)
+        self.QuitGameBtn = Button(self.buttonFrame, text="게임 종료", bg="gray", command=self.confirmQuitGame)
+        self.QuitGameBtn.grid(row=0,column=5)
+
+        # 기본 UI 배경색 설정
+        self.defaultbg = self.cpuInfoFrame.cget('bg')
         
         
         self.updateInfo()
@@ -146,9 +165,8 @@ class Display:
         self.turn = 0
         self.myMoneyInfo.newGame()
         self.cpuMoneyInfo.newGame()
-        defaultbg = self.cpuInfoFrame.cget('bg')
-        self.cpuMessage.config(text = "", bg=defaultbg)
-        self.myMessage.config(text = "", bg=defaultbg)
+        self.cpuMessage.config(text = "", bg=self.defaultbg)
+        self.myMessage.config(text = "", bg=self.defaultbg)
         self.updateInfo()
         self.CardDeck.initDeck()
         self.myCards = self.displayCardofDeck(self.CardDeck.drawMyCard())
@@ -159,8 +177,7 @@ class Display:
         for i in range(2):
             Label(self.cpuCardFrame, image=self.backCard).grid(row=0,column=i)
             Label(self.myCardFrame, image=self.backCard).grid(row=0,column=i)
-        newGameBtn = Button(self.buttonFrame, text="게임 시작", command=self.startGame, width=8, bg="cyan")
-        newGameBtn.grid(row=0,column=0)
+        self.newGameBtn.config(text="게임 시작",command=self.startGame, bg="cyan", fg="black")
     
 
         
@@ -175,7 +192,8 @@ class Display:
         self.updateInfo()
         for i in range(2):
             Label(self.myCardFrame, image=self.myCards[i]).grid(row=0,column=i)
-        Button(self.buttonFrame, text="새 게임", command=self.confirmRestartGame, width=8, bg="yellow").grid(row=0,column=0)
+        self.newGameBtn.config(text="새 게임", command=self.confirmRestartGame, bg="yellow")
+        self.makeButtonsDefault()
         
         
 
@@ -198,9 +216,10 @@ class Display:
     def resultGame(self):
         self.turn = 5
         self.Betting = False
-        Button(self.buttonFrame, text="결과 정산", command=self.endGame, width=8, bg="lime").grid(row=0,column=0)
+        self.newGameBtn.config(text="결과 정산", command=self.endGame, bg="lime")
         for i in range(2):
             Label(self.cpuCardFrame, image=self.cpuCards[i]).grid(row=0,column=i)
+        self.makeButtonsGray()
 
 
     def endGame(self):
@@ -208,35 +227,74 @@ class Display:
         cpuFinalCards = self.CardDeck.getCpuDeckCards() + self.CardDeck.getCommonDeckCards()
         myJokbo, self.myScore = checkJokbo(myFinalCards)
         cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
+        self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
+        myKicker = self.getKicker(self.CardDeck.getMyDeckCards())
+        cpuKicker = self.getKicker(self.CardDeck.getCpuDeckCards())
+
+        if self.myScore > self.cpuScore:
+            self.winGame()
+            
+        elif self.myScore < self.cpuScore:
+            self.loseGame()
+            
+        else:
+            if myKicker > cpuKicker:
+                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                self.winGame()
+            elif myKicker < cpuKicker:
+                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                self.loseGame()
+            else:
+                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                self.drawGame()
+
         self.myMessage.configure(text = myJokbo)
         self.cpuMessage.configure(text = cpuJokbo)
-        self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
-        if self.myScore > self.cpuScore:
-            self.myMoneyInfo.addMoney(self.totalBetting)
-            self.myMessage.configure(bg="green")
-            self.cpuMessage.configure(bg="orange")
-        elif self.myScore < self.cpuScore:
-            self.cpuMoneyInfo.addMoney(self.totalBetting)
-            self.myMessage.configure(bg="orange")
-            self.cpuMessage.configure(bg="green")
-        else:
-            self.myMoneyInfo.addMoney(self.totalBetting//2)
-            self.cpuMoneyInfo.addMoney(self.totalBetting//2)
-            self.myMessage.configure(bg="orange")
-            self.cpuMessage.configure(bg="orange")
         self.myMoneyInfo.newGame()
         self.cpuMoneyInfo.newGame()
         self.updateInfo()
-        self.showResult(self.myScore, self.cpuScore, self.totalBetting)
+        self.showResult(self.myScore, self.cpuScore, myKicker, cpuKicker, self.totalBetting)
         self.gameSet()
     
-        
+    
+    def winGame(self):
+        self.myMoneyInfo.addMoney(self.totalBetting)
+        self.myMessage.configure(bg="green")
+        self.cpuMessage.configure(bg="orange")
+    
+    def loseGame(self):
+        self.cpuMoneyInfo.addMoney(self.totalBetting)
+        self.myMessage.configure(bg="orange")
+        self.cpuMessage.configure(bg="green")
+
+    def drawGame(self):
+        self.myMoneyInfo.addMoney(self.totalBetting//2)
+        self.cpuMoneyInfo.addMoney(self.totalBetting//2)
+        self.myMessage.configure(bg="orange")
+        self.cpuMessage.configure(bg="orange")
+
+    
+    def getKicker(self, deck):
+        numList = []
+        for card in deck:
+            numList.append(card // 4)
+        if 13 in numList: # 12가 A
+            return 13
+        else:
+            return max(numList)
+
+    def changeKicker(self, num):
+        numList = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+        return numList[num]
         
     
-    def showResult(self, myScore, cpuScore, totalBetting):
-        if myScore > cpuScore:
+    def showResult(self, myScore, cpuScore, myKicker, cpuKicker, totalBetting):
+        if (myScore > cpuScore) or ((myScore == cpuScore) and (myKicker > cpuKicker)):
             tkinter.messagebox.showinfo("판돈 확보 성공", str(totalBetting) + "을 획득하였습니다.")
-        elif myScore < cpuScore:
+        elif (myScore < cpuScore) or ((myScore == cpuScore) and (myKicker < cpuKicker)):
             tkinter.messagebox.showinfo("핀돈 확보 실패", "상대방이 " + str(totalBetting) + "을 가져갑니다.")
         else:
             tkinter.messagebox.showinfo("무승부", "판돈의 절반 " + str(totalBetting//2) + "을 획득하였습니다.")
@@ -245,12 +303,26 @@ class Display:
     def gameSet(self):
         if self.myMoneyInfo.getMoney() <= 0:
             tkinter.messagebox.showinfo("파산", "소지 금액을 모두 잃었으므로 게임에서 패배하였습니다.")
-            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
+            self.newGameBtn.config(text="게임 초기화", command=self.confirmInitMoney, bg="red", fg="white")
         elif self.cpuMoneyInfo.getMoney() <= 0:
             tkinter.messagebox.showinfo("승리", "상대방의 소지 금액이 모두 소진되어 게임에서 승리하였습니다.")
-            Button(self.buttonFrame, text="게임 초기화", command=self.confirmInitMoney, width=8, bg="red", fg="white").grid(row=0,column=0)
+            self.newGameBtn.config(text="게임 초기화", command=self.confirmInitMoney, bg="red", fg="white")
         else:
-            Button(self.buttonFrame, text="새 게임", command=self.confirmInitGame, width=8, bg="yellow").grid(row=0,column=0)
+            self.newGameBtn.config(text="새 게임", command=self.confirmInitGame, bg="yellow")
+
+    
+    def makeButtonsGray(self):
+        self.foldBtn.config(bg="lightgray")
+        self.BettingBtn.config(bg="lightgray")
+        self.checkBtn.config(bg="lightgray")
+        self.AllInBtn.config(bg="lightgray")
+
+    def makeButtonsDefault(self):
+        self.foldBtn.config(bg=self.defaultbg)
+        self.BettingBtn.config(bg=self.defaultbg)
+        self.checkBtn.config(bg=self.defaultbg)
+        self.AllInBtn.config(bg=self.defaultbg)
+        
     
 
 
@@ -262,7 +334,8 @@ class Display:
             Label(self.commonCardFrame, image=self.commonCards[i]).grid(row=0,column=i)
         for i in range(2):
             Label(self.cpuCardFrame, image=self.cpuCards[i]).grid(row=0,column=i)
-        Button(self.buttonFrame, text="결과 보기", command=self.foldGameResult, width=8, bg="lime").grid(row=0,column=0)
+        self.newGameBtn.config(text="결과 보기", command=self.foldGameResult, bg="lime")
+        self.makeButtonsGray()
 
     def foldGameResult(self):
         myFinalCards = self.CardDeck.getMyDeckCards() + self.CardDeck.getCommonDeckCards()
@@ -297,7 +370,8 @@ class Display:
             Label(self.commonCardFrame, image=self.commonCards[i]).grid(row=0,column=i)
         for i in range(2):
             Label(self.cpuCardFrame, image=self.cpuCards[i]).grid(row=0,column=i)
-        Button(self.buttonFrame, text="결과 정산", command=self.endGame, width=8, bg="lime").grid(row=0,column=0)
+        self.newGameBtn.config(text="결과 정산", command=self.endGame, bg="lime")
+        self.makeButtonsGray()
 
     def confirmAllInGame(self):
         if (1 > self.turn or self.turn > 4):
@@ -355,7 +429,8 @@ class Display:
         self.updateInfo()
         self.Betting = True
         if self.turn >= 4:
-            Button(self.buttonFrame, text="결과 보기", command=self.resultGame, width=8, bg="lime").grid(row=0,column=0)
+            self.newGameBtn.config(text="결과 보기", command=self.resultGame, bg="lime")
+            self.makeButtonsGray()
             self.turn = 5
             return
         self.nextGame()
@@ -363,7 +438,8 @@ class Display:
     def checkGame(self):
         self.Betting = True
         if self.turn >= 4:
-            Button(self.buttonFrame, text="결과 보기", command=self.resultGame, width=8, bg="lime").grid(row=0,column=0)
+            self.newGameBtn.config(text="결과 보기", command=self.resultGame, bg="lime")
+            self.makeButtonsGray()
             self.turn = 5
             return
         self.nextGame()
@@ -380,17 +456,12 @@ class Display:
 
     def updateInfo(self):
         # CPU의 정보 창
-        self.cpuMoney = Label(self.cpuInfoFrame, text="상대의 총액 : " + str(self.cpuMoneyInfo.getMoney()), width=20)
-        self.cpuBetting = Label(self.cpuInfoFrame, text="상대의 배팅액 : " + str(self.cpuMoneyInfo.getTotalBetting()), width=20)
-        self.cpuMoney.grid(row=0,column=0)
-        self.cpuBetting.grid(row=0,column=1)
+        self.cpuMoney.config(text="상대의 총액 : " + str(self.cpuMoneyInfo.getMoney()))
+        self.cpuBetting.config(text="상대의 배팅액 : " + str(self.cpuMoneyInfo.getTotalBetting()))
         # 사용자의 정보 창
-        self.myMoney = Label(self.myInfoFrame, text="당신의 총액 : " + str(self.myMoneyInfo.getMoney()), width=20)
-        self.minimumBetting = Label(self.myInfoFrame, text="블라인드 : " + str(self.myMoneyInfo.getBlindAmount()), width=20)
-        self.myBetting = Label(self.myInfoFrame, text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBetting()), width=20)
-        self.myMoney.grid(row=0,column=0)
-        self.minimumBetting.grid(row=0,column=1)
-        self.myBetting.grid(row=0,column=2)
+        self.myMoney.config(text="당신의 총액 : " + str(self.myMoneyInfo.getMoney()))
+        self.myBetting.config(text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBetting()))
+
 
     def initMoney(self):
         self.myMoneyInfo.initMoney()

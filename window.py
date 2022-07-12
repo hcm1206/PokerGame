@@ -281,13 +281,18 @@ class Display:
         numList = []
         for card in deck:
             numList.append(card // 4)
+            
         if 13 in numList: # 12가 A
             return 13
         else:
             return max(numList)
 
     def changeKicker(self, num):
+
         numList = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+
+     
+
         return numList[num]
         
     
@@ -472,6 +477,8 @@ class Display:
         initGame = tkinter.messagebox.askokcancel("게임 초기화", "현재 게임 진행 및 잔금을 초기화하시겠습니까?")
         if initGame:
             self.initMoney()
+
+    
 
     
 

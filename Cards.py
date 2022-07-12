@@ -54,12 +54,16 @@ class Cards:
         self.index += 1
         return card
 
-    def getMyDeckCards(self): # 내 카드 보는곳
+
+    # 본인 패의 카드 2장 정보 리스트로 출력
+    def getMyDeckCards(self):
         return self.myDeckCards
 
-    def getCpuDeckCards(self): # cpu카드 보는곳
+    # 상대방 패의 카드 2장 정보 리스트로 출력
+    def getCpuDeckCards(self):
         return self.cpuDeckCards
 
+    # 커뮤니티 카드 2장 정보 리스트로 출력
     def getCommonDeckCards(self):
         return self.commonDeckCards
         

@@ -281,13 +281,18 @@ class Display:
         numList = []
         for card in deck:
             numList.append(card // 4)
-        if 0 in numList:
+            
+        if 13 in numList: # 12가 A
             return 13
         else:
             return max(numList)
 
     def changeKicker(self, num):
-        numList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+
+        numList = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+
+     
+
         return numList[num]
         
     

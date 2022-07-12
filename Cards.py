@@ -54,6 +54,7 @@ class Cards:
         self.index += 1
         return card
 
+
     # 본인 패의 카드 2장 정보 리스트로 출력
     def getMyDeckCards(self):
         return self.myDeckCards

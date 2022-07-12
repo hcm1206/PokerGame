@@ -226,7 +226,7 @@ def checkJokbo(deck):
     strJokbo += " " + jokbo[score // 100 -1 ] 
     numScore = score % 100 
     if numScore == 1:
-        score += 13
+        score += 12
     return strJokbo, score
 
 def getScore(deck):

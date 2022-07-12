@@ -228,8 +228,8 @@ class Display:
         myJokbo, self.myScore = checkJokbo(myFinalCards)
         cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
         self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
-        myKicker = self.getKicker(self.CardDeck.getMyDeckCards())
-        cpuKicker = self.getKicker(self.CardDeck.getCpuDeckCards())
+        myKicker = self.CardDeck.getMyKicker()
+        cpuKicker = self.CardDeck.getCpuKicker()
 
         if self.myScore > self.cpuScore:
             self.winGame()
@@ -239,16 +239,16 @@ class Display:
             
         else:
             if myKicker > cpuKicker:
-                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
-                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                myJokbo += " | 키커 : " + str(self.changeCardNumber(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeCardNumber(cpuKicker))
                 self.winGame()
             elif myKicker < cpuKicker:
-                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
-                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                myJokbo += " | 키커 : " + str(self.changeCardNumber(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeCardNumber(cpuKicker))
                 self.loseGame()
             else:
-                myJokbo += " | 키커 : " + str(self.changeKicker(myKicker))
-                cpuJokbo += " | 키커 : " + str(self.changeKicker(cpuKicker))
+                myJokbo += " | 키커 : " + str(self.changeCardNumber(myKicker))
+                cpuJokbo += " | 키커 : " + str(self.changeCardNumber(cpuKicker))
                 self.drawGame()
 
         self.myMessage.configure(text = myJokbo)
@@ -276,22 +276,10 @@ class Display:
         self.myMessage.configure(bg="orange")
         self.cpuMessage.configure(bg="orange")
 
-    
-    def getKicker(self, deck):
-        numList = []
-        for card in deck:
-            numList.append(card // 4)
-            
-        if 13 in numList: # 12가 A
-            return 13
-        else:
-            return max(numList)
 
-    def changeKicker(self, num):
+    def changeCardNumber(self, num):
 
         numList = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
-
-     
 
         return numList[num]
         

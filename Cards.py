@@ -66,6 +66,24 @@ class Cards:
     # 커뮤니티 카드 2장 정보 리스트로 출력
     def getCommonDeckCards(self):
         return self.commonDeckCards
+
+    def getMyKicker(self):
+        return self.getKicker(self.myDeckCards)
+
+    def getCpuKicker(self):
+        return self.getKicker(self.cpuDeckCards)
+
+    def getKicker(self, deck):
+        numList = []
+        for card in deck:
+            numList.append(card // 4)
+            
+        if 13 in numList: # 12가 A
+            return 13
+        else:
+            return max(numList)
+
+
         
 
 

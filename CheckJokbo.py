@@ -93,7 +93,6 @@ def fullHouse(deck):
         elif(numList.count(i) == 2):
             pair = True
         if (triple and pair):
-            num = max(numList)
             score = 700 + num + 1
     return score
 
@@ -138,8 +137,8 @@ def straight(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
         numList.append(card // 4)
     for i in range(9):
         checkDeck = []
-        if set([8,9,10,11,12]) <= set(numList):
-            score = 501
+        if set([0,1,2,3,12]) <= set(numList):
+            score = 513
             break
         for j in range(i, i+5):
             checkDeck.append(j)

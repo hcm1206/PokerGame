@@ -21,7 +21,7 @@ testDeck2 = [37,38,39,32,33,2,3] # 풀하우스
 
 testDeck3 = [19,35,39,43,45,3,15] # 플러시
 
-testDeck4 = [49,2,4,10,14,32,29] # 스트레이트
+testDeck4 = [14,17,23,24,29,35,38] # 스트레이트
 
 testDeck5 = [1,2,3,5,16,17,18] # 트리플
 
@@ -48,7 +48,7 @@ print("정상적으로는 Q플러쉬 / 점수 : 611") # 성공
 print()
 '''
 print(checkJokbo(testDeck4))
-print("정상적으로는 A스트레이트 / 점수 : 513") # 성공
+print("정상적으로는 J스트레이트 / 점수 : 913") # 성공
 print()
 '''
 print(checkJokbo(testDeck5))

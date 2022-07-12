@@ -54,10 +54,10 @@ class Cards:
         self.index += 1
         return card
 
-    def getMyDeckCards(self):
+    def getMyDeckCards(self): # 내 카드 보는곳
         return self.myDeckCards
 
-    def getCpuDeckCards(self):
+    def getCpuDeckCards(self): # cpu카드 보는곳
         return self.cpuDeckCards
 
     def getCommonDeckCards(self):

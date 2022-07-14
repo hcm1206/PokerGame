@@ -9,9 +9,14 @@ class MoneyInfo:
     def newGame(self):
         self.totalBetting = 0
     
+    # 만약 블라인드보다 소지금이 적다면 모든 소지금을 블라인드로 제출하게 됨(음수가 나오지 않게 조정)
     def blind(self):
-        self.money -= self.blindamount
-        self.totalBetting += self.blindamount
+        if self.money >= self.blindamount:
+            self.money -= self.blindamount
+            self.totalBetting += self.blindamount
+        else:
+            self.totalBetting += self.money
+            self.money = 0
 
     def addBetting(self, amount):
         self.money -= amount
@@ -36,6 +41,9 @@ class MoneyInfo:
     def getBlindAmount(self):
         return self.blindamount
 
+    def setBlind(self, blind):
+        self.blindamount = blind
+
     def getTotalBetting(self):
         return self.totalBetting
     
@@ -44,6 +52,8 @@ class MoneyInfo:
 
     def getMoney(self):
         return self.money
+
+
 
     
 

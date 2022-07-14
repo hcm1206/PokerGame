@@ -16,7 +16,12 @@ class Display:
         mainMenu = Menu(window)
         window.configure(menu = mainMenu)
 
-        mainMenu.add_cascade(label="게임 초기화", command=self.confirmInitMoney)
+        subMenu = Menu(mainMenu, tearoff=0)
+
+        mainMenu.add_cascade(label="게임 설정", menu=subMenu)
+
+        subMenu.add_command(label="게임 초기화", command=self.confirmInitMoney)
+        subMenu.add_command(label="블라인드 설정", command=self.settingBlind)
 
 
         # 카드 이미지 크기 설정
@@ -62,10 +67,10 @@ class Display:
         self.cpuBetting.grid(row=0,column=1)
         # 사용자의 정보 창
         self.myMoney = Label(self.myInfoFrame, text="당신의 총액 : " + str(self.myMoneyInfo.getMoney()), width=20)
-        self.minimumBetting = Label(self.myInfoFrame, text="블라인드 : " + str(self.myMoneyInfo.getBlindAmount()), width=20)
+        self.nowBlind = Label(self.myInfoFrame, text="블라인드 : " + str(self.myMoneyInfo.getBlindAmount()), width=20)
         self.myBetting = Label(self.myInfoFrame, text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBetting()), width=20)
         self.myMoney.grid(row=0,column=0)
-        self.minimumBetting.grid(row=0,column=1)
+        self.nowBlind.grid(row=0,column=1)
         self.myBetting.grid(row=0,column=2)
 
         
@@ -397,7 +402,6 @@ class Display:
             try:
                 if int(BettingAmount) < self.myMoneyInfo.getMinimumBetting():
                     tkinter.messagebox.showwarning("알림", "최소 " + str(self.myMoneyInfo.getMinimumBetting()) + "이상 배팅하셔야 합니다.")
-                    print(BettingAmount)
                     continue
                 elif BettingAmount == 0:
                     self.confirmCheckGame()
@@ -454,6 +458,7 @@ class Display:
         # 사용자의 정보 창
         self.myMoney.config(text="당신의 총액 : " + str(self.myMoneyInfo.getMoney()))
         self.myBetting.config(text="당신의 배팅액 : " + str(self.myMoneyInfo.getTotalBetting()))
+        self.nowBlind.config(text="블라인드 : " + str(self.myMoneyInfo.getBlindAmount()))
 
 
     def initMoney(self):
@@ -466,6 +471,31 @@ class Display:
         if initGame:
             self.initMoney()
 
+    # 블라인드 설정하는 메소드
+    # 최소 블라인드와 최대 블라인드 적용 기준은 어떻게 해야 할지 토의 필요
+    def settingBlind(self):
+        while(1):
+            newBlind = tkinter.simpledialog.askinteger("블라인드 설정", "설정할 블라인드 액수를 입력하세요")
+            try:
+                if int(newBlind) < 100:
+                    tkinter.messagebox.showwarning("알림", "설정 가능한 블라인드의 최소액은 100입니다.")
+                    continue
+                elif int(newBlind) > 5000:
+                    tkinter.messagebox.showwarning("알림", "설정 가능한 블라인드의 최대액은 5000입니다.")
+                    continue
+                else:
+                    confirmBetting = tkinter.messagebox.askokcancel("블라인드 설정", "블라인드로 " + str(newBlind) + "을 설정하시겠습니까?")
+                    if confirmBetting:
+                        break
+                    else:
+                        continue
+            except:
+                return
+        self.cpuMoneyInfo.setBlind(newBlind)
+        self.myMoneyInfo.setBlind(newBlind)
+        self.updateInfo()
+        if self.turn != 0:
+            tkinter.messagebox.showinfo("알림", "다음 게임부터 " + str(newBlind) + "의 블라인드가 적용됩니다.")
     
 
     

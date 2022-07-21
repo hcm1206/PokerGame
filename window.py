@@ -14,13 +14,13 @@ class Display:
     def __init__(self):
 
         
-
+        # tkinter UI 사용
         window = Tk()
         window.title("Poker Game")
 
+        # 상단 메뉴바 설정
         mainMenu = Menu(window)
         window.configure(menu = mainMenu)
-
         subMenu = Menu(mainMenu, tearoff=0)
 
         
@@ -32,7 +32,7 @@ class Display:
         self.height = 110
         self.width = 80
         
-
+        # 카드 뒷면 이미지 데이터 (카드 뒷면 이미지를 표시할 때 이걸 쓰면 됨)
         self.backCard = self.displayBackCard()
 
 
@@ -47,13 +47,33 @@ class Display:
         self.buttonFrame = Frame(window)
         self.myInfoFrame = Frame(window)
 
+        # 상태창(결과 텍스트 띄우는 용도) 구성
         self.cpuMessage = Label(self.cpuMessageFrame, text="", height=2)
         self.myMessage = Label(self.myMessageFrame, text="", height=2)
         self.cpuMessage.pack()
         self.myMessage.pack()
 
+
+        # 카드 이미지 띄울 창(리스트) 구성
+        self.myCardImgs = []
+        self.cpuCardImgs = []
+        self.commonCardImgs = []
+        # 커뮤니티 패 5장 이미지 공간 확보
+        for i in range(5):
+            self.commonCardImgs.append(Label(self.commonCardFrame, image=self.backCard))
+            self.commonCardImgs[i].grid(row=0,column=i)
+        # 사용자 패, 상대방 패 각각 2장 이미지 공간 확보
+        for i in range(2):
+            self.myCardImgs.append(Label(self.myCardFrame, image=self.backCard))
+            self.myCardImgs[i].grid(row=0,column=i)
+            self.cpuCardImgs.append(Label(self.cpuCardFrame, image=self.backCard))
+            self.cpuCardImgs[i].grid(row=0,column=i)
+
+        # ** 게임 진행을 담당하는 클래스 **
+        # 게임 진행 관련 데이터나 메소드를 이 파일에서 쓰고 싶다면 self.game.(메소드 or 파일) 식으로 불러와서 사용할 수 있음
         self.game = GameProcess(self)
 
+        # 메뉴 목록 구성
         mainMenu.add_cascade(label="게임 설정", menu=subMenu)
         subMenu.add_command(label="게임 초기화", command=self.game.confirmInitMoney)
         subMenu.add_command(label="블라인드 설정", command=self.game.settingBlind)
@@ -70,6 +90,8 @@ class Display:
         self.myMoney.grid(row=0,column=0)
         self.nowBlind.grid(row=0,column=1)
         self.myBetting.grid(row=0,column=2)
+
+
 
         
         
@@ -90,7 +112,7 @@ class Display:
         # 기본 UI 배경색 설정
         self.defaultbg = self.cpuInfoFrame.cget('bg')
         
-        
+        # 게임 시작할 때 기준 게임 정보(초기 배팅액, 블라인드 등) 갱신
         self.updateInfo()
         
 
@@ -121,7 +143,6 @@ class Display:
         self.myCards = self.displayCardofDeck(self.game.CardDeck.drawMyCard())
         self.cpuCards = self.displayCardofDeck(self.game.CardDeck.drawCpuCard())
         self.commonCards = self.displayCardofDeck(self.game.CardDeck.drawInitCommonCard())
-
         
 
     # 숫자 리스트를 입력하면 카드 이미지 객체 리스트로 변환

@@ -7,21 +7,31 @@ class GameAction:
     def __init__(self, window):
         self.window = window
 
-
+    # 사용자가 폴드 했을 때 실행되는 코드
     def foldGame(self):
         self.window.game.turn = 5
         for i in range(5):
-            Label(self.window.commonCardFrame, image=self.window.commonCards[i]).grid(row=0,column=i)
+            newImage = self.window.commonCards[i]
+            self.window.commonCardImgs[i].config(image=newImage)
+            self.window.commonCardImgs[i].image = newImage
         for i in range(2):
-            Label(self.window.cpuCardFrame, image=self.window.cpuCards[i]).grid(row=0,column=i)
+            newImage = self.window.cpuCards[i]
+            self.window.cpuCardImgs[i].config(image=newImage)
+            self.window.cpuCardImgs[i].image = newImage
         self.window.newGameBtn.config(text="결과 보기", command=self.foldGameResult, bg="lime")
         self.window.makeButtonsGray()
 
+    # 폴드 후 결과 출력하기
     def foldGameResult(self):
         myFinalCards = self.window.game.CardDeck.getMyDeckCards() + self.window.game.CardDeck.getCommonDeckCards()
         cpuFinalCards = self.window.game.CardDeck.getCpuDeckCards() + self.window.game.CardDeck.getCommonDeckCards()
-        myJokbo, self.myScore = checkJokbo(myFinalCards)
-        cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
+        myJokbo, myScore = checkJokbo(myFinalCards)
+        cpuJokbo, cpuScore = checkJokbo(cpuFinalCards)
+        if myScore == cpuScore:
+            myKicker = self.window.game.CardDeck.getMyKicker()
+            cpuKicker = self.window.game.CardDeck.getCpuKicker()
+            myJokbo += " | 키커 : " + str(self.window.game.changeCardNumber(myKicker))
+            cpuJokbo += " | 키커 : " + str(self.window.game.changeCardNumber(cpuKicker))
         self.window.myMessage.configure(text = myJokbo)
         self.window.cpuMessage.configure(text = cpuJokbo)
         self.totalBetting = self.window.game.cpuMoneyInfo.getTotalBetting() + self.window.game.myMoneyInfo.getTotalBetting()
@@ -32,6 +42,7 @@ class GameAction:
         tkinter.messagebox.showinfo("폴드", "상대방이 " + str(self.totalBetting) + "을 가져갑니다.")
         self.window.game.gameSet()
 
+    # 현재 폴드가 가능한지 확인 후 사용자에게 정말로 폴드할 것인지 재확인
     def confirmFoldGame(self):
         if (1 > self.window.game.turn or self.window.game.turn > 4):
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 폴드가 가능합니다.")
@@ -40,19 +51,25 @@ class GameAction:
         if foldGame:
             self.foldGame()
 
+    # 사용자가 올인했을 때 실행되는 코드
     def AllInGame(self):
         self.window.game.turn = 5
-        self.window.game.myMoneyInfo.allIn()
-        self.window.game.cpuMoneyInfo.allIn()
+        self.window.game.myMoneyInfo.allIn(self.window.game.cpuMoneyInfo)
+        # self.window.game.cpuMoneyInfo.allIn()
         self.window.updateInfo()
         self.window.game.Betting = True
         for i in range(5):
-            Label(self.window.commonCardFrame, image=self.window.commonCards[i]).grid(row=0,column=i)
+            newImage = self.window.commonCards[i]
+            self.window.commonCardImgs[i].config(image=newImage)
+            self.window.commonCardImgs[i].image = newImage
         for i in range(2):
-            Label(self.window.cpuCardFrame, image=self.window.cpuCards[i]).grid(row=0,column=i)
+            newImage = self.window.cpuCards[i]
+            self.window.cpuCardImgs[i].config(image=newImage)
+            self.window.cpuCardImgs[i].image = newImage
         self.window.newGameBtn.config(text="결과 정산", command=self.window.game.endGame, bg="lime")
         self.window.makeButtonsGray()
 
+    # 현재 올인이 가능한지 확인 후 사용자에게 정말 올인할 것인지 재확인
     def confirmAllInGame(self):
         if (1 > self.window.game.turn or self.window.game.turn > 4):
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 올인이 가능합니다.")
@@ -74,11 +91,12 @@ class GameAction:
 
     
 
-
+    # 현재 배팅이 가능한지 확인 후 사용자에게 알맞은 배팅 값을 입력받아 배팅 진행
     def BettingMoney(self):
         if 1 > self.window.game.turn or self.window.game.turn > 4:
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 배팅이 가능합니다.")
             return
+        # 사용자가 알맞은 배팅액을 입력할 때까지 무한 루프
         while(1):
             BettingAmount = tkinter.simpledialog.askinteger("배팅액 입력", "배팅액을 입력하세요")
             try:
@@ -114,6 +132,7 @@ class GameAction:
             return
         self.window.game.nextGame()
 
+    # 사용자가 체크시 실행할 코드
     def checkGame(self):
         self.window.game.Betting = True
         if self.window.game.turn >= 4:
@@ -123,6 +142,7 @@ class GameAction:
             return
         self.window.game.nextGame()
     
+    # 현재 체크가 가능한지 확인 후 사용자에게 정말 체크할 것인지 재확인
     def confirmCheckGame(self):
         if (1 > self.window.game.turn or self.window.game.turn > 4):
             tkinter.messagebox.showwarning("알림", "게임 진행 중에만 체크가 가능합니다.")

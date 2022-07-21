@@ -22,9 +22,15 @@ class MoneyInfo:
         self.money -= amount
         self.totalBetting += amount
     
-    def allIn(self):
-        self.totalBetting += self.money
-        self.money = 0
+    def allIn(self, oppositeMoneyInfo):
+        oppositeMoney = oppositeMoneyInfo.getMoney()
+        myMoney = self.money
+        if self.money > oppositeMoney:
+            self.addBetting(self.money)
+            oppositeMoneyInfo.addBetting(oppositeMoney)
+        else:
+            self.addBetting(self.money)
+            oppositeMoneyInfo.addBetting(myMoney)
 
     def addMoney(self, acount):
         self.money += acount
@@ -52,6 +58,7 @@ class MoneyInfo:
 
     def getMoney(self):
         return self.money
+
 
 
 

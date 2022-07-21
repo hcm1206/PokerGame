@@ -4,26 +4,27 @@ import tkinter.simpledialog
 from PIL import ImageTk, Image
 from Cards import *
 from money import *
-from action import GameAction
 from CheckJokbo import checkJokbo
 
 class GameProcess:
+    # 상위 클래스 display를 받아옴
     def __init__(self, display):
-        # self.에 Cards 객체 저장
+        # 상위 window 클래스의 데이터나 메소드를 불러오고 싶다면 self.window.(데이터 or 메소드) 와 같이 불러와 사용 및 수정 가능
         self.display = display
+        # self.에 Cards 객체 저장
         self.CardDeck = Cards()
 
-        
-
+        # 참여자들의 잔돈 상태를 저장할 클래스 선언
         self.cpuMoneyInfo = MoneyInfo()
         self.myMoneyInfo = MoneyInfo()
+
+        # 현재 턴을 세는 변수
+        self.turn = 0
+        # 현재 턴에 배팅 과정이 진행되었는지 여부 판단하는 변수
         self.Betting = False
 
-        for i in range(5):
-            Label(self.display.commonCardFrame, image=self.display.backCard).grid(row=0,column=i)
-        for i in range(2):
-            Label(self.display.cpuCardFrame, image=self.display.backCard).grid(row=0,column=i)
-            Label(self.display.myCardFrame, image=self.display.backCard).grid(row=0,column=i)
+        # 현재 턴에서 배팅이 진행되어야(self.Betting = True를 만족해야) 다음 턴으로 진행할 수 있는 구조
+
 
 
 
@@ -62,11 +63,17 @@ class GameProcess:
         self.CardDeck.initDeck()
         self.display.updateCard()
 
+
         for i in range(5):
-            Label(self.display.commonCardFrame, image=self.display.backCard).grid(row=0,column=i)
+            newImage = self.display.backCard
+            self.display.commonCardImgs[i].config(image=newImage)
+            self.display.commonCardImgs[i].image = newImage
         for i in range(2):
-            Label(self.display.cpuCardFrame, image=self.display.backCard).grid(row=0,column=i)
-            Label(self.display.myCardFrame, image=self.display.backCard).grid(row=0,column=i)
+            newImage = self.display.backCard
+            self.display.myCardImgs[i].config(image=newImage)
+            self.display.myCardImgs[i].image = newImage
+            self.display.cpuCardImgs[i].config(image=newImage)
+            self.display.cpuCardImgs[i].image = newImage
         self.display.newGameBtn.config(text="게임 시작",command=self.startGame, bg="cyan", fg="black")
     
 
@@ -82,7 +89,8 @@ class GameProcess:
         self.display.updateInfo()
 
         for i in range(2):
-            Label(self.display.myCardFrame, image=self.display.myCards[i]).grid(row=0,column=i)
+            newImage = self.display.myCards[i]
+            self.display.myCardImgs[i].config(image=newImage)
         self.display.newGameBtn.config(text="새 게임", command=self.confirmRestartGame, bg="yellow")
         self.display.makeButtonsDefault()
         
@@ -99,10 +107,14 @@ class GameProcess:
         # 현재 2턴이면 공용카드 3장 공개
         if self.turn == 2:
             for i in range(3):
-                Label(self.display.commonCardFrame, image=self.display.commonCards[i]).grid(row=0,column=i)
+                newImage = self.display.commonCards[i]
+                self.display.commonCardImgs[i].config(image=newImage)
+                self.display.commonCardImgs[i].image = newImage
         # 현재 3턴 또는 4턴이면 공용카드 1장 공개
         else:
-            Label(self.display.commonCardFrame, image=self.display.commonCards[self.turn]).grid(row=0,column=self.turn)
+            newImage = self.display.commonCards[self.turn]
+            self.display.commonCardImgs[self.turn].config(image=newImage)
+            self.display.commonCardImgs[self.turn].image = newImage
 
     # 게임 결과 보기 (5턴)
     def resultGame(self):
@@ -111,10 +123,12 @@ class GameProcess:
         self.display.newGameBtn.config(text="결과 정산", command=self.endGame, bg="lime")
 
         for i in range(2):
-            Label(self.display.cpuCardFrame, image=self.display.cpuCards[i]).grid(row=0,column=i)
+            newImage = self.display.cpuCards[i]
+            self.display.cpuCardImgs[i].config(image=newImage)
+            self.display.cpuCardImgs[i].image = newImage
         self.display.makeButtonsGray()
 
-
+    # 게임 종료 및 족보 판정
     def endGame(self):
         myFinalCards = self.CardDeck.getMyDeckCards() + self.CardDeck.getCommonDeckCards()
         cpuFinalCards = self.CardDeck.getCpuDeckCards() + self.CardDeck.getCommonDeckCards()
@@ -124,21 +138,27 @@ class GameProcess:
         myKicker = self.CardDeck.getMyKicker()
         cpuKicker = self.CardDeck.getCpuKicker()
 
+        # 내 점수가 높으면 승리
         if self.myScore > self.cpuScore:
             self.winGame()
-            
+        
+        # 상대 점수가 높으면 패배
         elif self.myScore < self.cpuScore:
             self.loseGame()
-            
+        
+        # 점수가 동점이면 키커 비교
         else:
+            # 내 키커가 더 높으면 승리
             if myKicker > cpuKicker:
                 myJokbo += " | 키커 : " + str(self.changeCardNumber(myKicker))
                 cpuJokbo += " | 키커 : " + str(self.changeCardNumber(cpuKicker))
                 self.winGame()
+            # 상대 키커가 더 높으면 패배
             elif myKicker < cpuKicker:
                 myJokbo += " | 키커 : " + str(self.changeCardNumber(myKicker))
                 cpuJokbo += " | 키커 : " + str(self.changeCardNumber(cpuKicker))
                 self.loseGame()
+            # 키커까지 똑같다면 무승부
             else:
                 myJokbo += " | 키커 : " + str(self.changeCardNumber(myKicker))
                 cpuJokbo += " | 키커 : " + str(self.changeCardNumber(cpuKicker))
@@ -152,31 +172,33 @@ class GameProcess:
         self.showResult(self.myScore, self.cpuScore, myKicker, cpuKicker, self.totalBetting)
         self.gameSet()
     
-    
+    # 게임 승리
     def winGame(self):
         self.myMoneyInfo.addMoney(self.totalBetting)
-        self.display.myMessage.configure(bg="green")
+        self.display.myMessage.configure(bg="lime")
         self.display.cpuMessage.configure(bg="orange")
     
+    # 게임 패배
     def loseGame(self):
         self.cpuMoneyInfo.addMoney(self.totalBetting)
         self.display.myMessage.configure(bg="orange")
-        self.display.cpuMessage.configure(bg="green")
+        self.display.cpuMessage.configure(bg="lime")
 
+    # 무승부
     def drawGame(self):
         self.myMoneyInfo.addMoney(self.totalBetting//2)
         self.cpuMoneyInfo.addMoney(self.totalBetting//2)
         self.display.myMessage.configure(bg="orange")
         self.display.cpuMessage.configure(bg="orange")
 
-
+    # 숫자 점수를 실제 포커 카드 숫자로 바꾸는 메소드
     def changeCardNumber(self, num):
 
         numList = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
         return numList[num]
         
-    
+    # 결과 팝업 메시지 출력
     def showResult(self, myScore, cpuScore, myKicker, cpuKicker, totalBetting):
         if (myScore > cpuScore) or ((myScore == cpuScore) and (myKicker > cpuKicker)):
             tkinter.messagebox.showinfo("판돈 확보 성공", str(totalBetting) + "을 획득하였습니다.")
@@ -185,7 +207,7 @@ class GameProcess:
         else:
             tkinter.messagebox.showinfo("무승부", "판돈의 절반 " + str(totalBetting//2) + "을 획득하였습니다.")
 
-
+    # 게임 종료(누군가 돈을 다 잃었으면 게임 최종 종료, 아니면 현재 금액으로 새 게임 시작)
     def gameSet(self):
         if self.myMoneyInfo.getMoney() <= 0:
             tkinter.messagebox.showinfo("파산", "소지 금액을 모두 잃었으므로 게임에서 패배하였습니다.")

@@ -1,6 +1,7 @@
 # 족보 판정용 모듈 파일
 # 다른 파일에서 족보판정을 할 때 from CheckJokbo import checkjokbo를 먼저 입력한 후 checkjokbo() 함수를 사용하면 됨
 
+
 def straightFlush(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     curCard = deck[0]
@@ -31,7 +32,7 @@ def straightFlush(deck):
     
     
     for card in deck:
-        if (card // 4) in [8,9,10,11,12]:
+        if (card // 4) in [13,9,10,11,12]:
             checkRoyalList.append(card)
             checkRoyalNumList.append(card // 4)
 
@@ -39,9 +40,9 @@ def straightFlush(deck):
 
     if straight:
         score = 900 + num + 1
-    if set([8,9,10,11,12]) <= set(checkRoyalNumList):
+    if set([13,9,10,11,12]) <= set(checkRoyalNumList):
         checkList = checkRoyalList
-        score = 913
+        score = 901
         return score
 
     
@@ -60,20 +61,19 @@ def straightFlush(deck):
         
 
         
+
 # 포카드 체크
 def fourCard(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
     score = -1
-    num = 0
-    count = 0
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
     for i in range(13): 
-        if(numList.count(i) == 4):
-             score = 800 + i + 1
+        if(numList.count(i)==4): # 포카드
+            score = 800 + i + 1
     return score
 
 def fullHouse(deck):
@@ -87,10 +87,10 @@ def fullHouse(deck):
         # 나누기 연산을 해 숫자만 봄
 
     for i in range(13): 
-        if(numList.count(i) == 3):
+        if(numList.count(i)==3):
             triple = True
             num = i
-        elif(numList.count(i) == 2):
+        elif(numList.count(i)==2):
             pair = True
         if (triple and pair):
             score = 700 + num + 1
@@ -122,8 +122,10 @@ def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패�
     if score == 600: # 플러쉬 점수라면?
         for card in deck: # 0부터 6까지 7번 반복
             if card % 4 == shape: 
-                numList.append(card // 4) # 숫자보는 것
-        score += max(numList) + 1
+                numList.append(card // 4)
+        score += max(numList)+1
+        if 0 in numList:
+            score = 601
     return score
 
 
@@ -137,8 +139,8 @@ def straight(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 �
         numList.append(card // 4)
     for i in range(9):
         checkDeck = []
-        if set([0,1,2,3,12]) <= set(numList):
-            score = 513
+        if set([0,9,10,11,12]) <= set(numList):
+            score = 501
             break
         for j in range(i, i+5):
             checkDeck.append(j)
@@ -153,37 +155,35 @@ def triple(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
     score = -1
-    num = 0
-    count = 0
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
     for i in range(13): 
-        if(numList.count(i) == 3):
-            score = 400 + i + 1
+        if(numList.count(i)==3): # 트리플
+            if i == 0:
+                score = 401
+            else:
+                score = 400 + i + 1
     return score
 
 # 투페어 체크
 def twoPair(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
-    #highcard(deck)
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
     count = 0
     score = -1
-    num = 0
+    num = -1
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(13): 
-        if(numList.count(i) == 2):# 투페어
-            if i > num:
-                num = i 
-            elif i == 12: # 수정 1
-                num = num + 13
-            if i == 1:
-                num = 1
+    for i in range(14): 
+        if(numList.count(i)==2):
+            if num != 0 and i > num:
+                num = i
+            elif i == 0:
+                num = 0
             count += 1
             if count >= 2:
                 score = 300 + num + 1
@@ -193,34 +193,40 @@ def onePair(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
     score = -1
-    num = 0
     for card in deck: # 패의 카드들을 불러와서 반복
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
     for i in range(13): 
         if(numList.count(i)==2):
-             score = 200 + i + 1
+            if i == 0:
+                score = 201
+            else:
+                score = 200 + i + 1
     return score
 
 def noPair(deck):
     deck.sort()
-    if(max(deck)==12):
-        return 100 + 13
+    numList = []
+    for card in deck:
+        numList.append(card//4)
+    if 0 in numList:
+        return 101
     else:
-        return 100 + max(deck) // 4 + 1
+        return 100 + max(numList) + 1
+
 
 def checkJokbo(deck):
     jokbo = ["노페어", "원페어", "투페어", "트리플", "스트레이트", "플러시", "풀하우스", "포카드", "스트레이트 플러시"]
-    num = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    num = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
     score = getScore(deck)
 
     
-    strJokbo = num[(score % 100)-1] 
-    strJokbo += " " + jokbo[score // 100 -1] 
-    numScore = score % 100 
-    if numScore == 13:
-        score += 12
+    strJokbo = num[(score % 100)-1]
+    strJokbo += " " + jokbo[score // 100 - 1]
+    numScore = score % 100
+    if numScore == 1:
+        score += 13
     return strJokbo, score
 
 def getScore(deck):

@@ -196,7 +196,7 @@ class GameProcess:
 
         numList = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 
-        return numList[num]
+        return numList[num-1]
         
     # 결과 팝업 메시지 출력
     def showResult(self, myScore, cpuScore, myKicker, cpuKicker, totalBetting):

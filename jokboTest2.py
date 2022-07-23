@@ -30,6 +30,38 @@ testDeck6 = [2, 6, 21, 31, 32, 40,41] # 원페어
 testDeck7 = [46,38,31,20,13,11,1] # 노페어
 
 testDeck8 = [34,35,48,49,10,13,24] # 투페어
+
+debugDeck = []
+
+debugDeck.append([2,6,7,11,13,19,21])
+
+debugDeck.append([1,5,7,9,13,17,25])
+
+debugDeck.append([3,34,35,38,41,47,49])
+
+debugDeck.append([8,9,11,13,24,25,26])
+
+debugDeck.append([1,3,4,6,11,32,50])
+
+
+for deck in debugDeck:
+    print(checkJokbo(deck)) # 5 스트레이트
+    print()
+
+# cardImgs = []
+# for i in range(len(debugDeck)): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
+#     # 이 아래는 GUI용 =======================================================
+#     cardImgs.append([])
+#     for j in range(len(debugDeck[i])):
+#         cardImgs[i].append(Image.open("card\d"+str(debugDeck[i][j])+".png"))
+#         cardImgs[i][j] = cardImgs[i][j].resize((width,height))
+#         cardImgs[i][j] = ImageTk.PhotoImage(cardImgs[i][j])
+#         Label(window, image=cardImgs[i][j]).grid(row=i,column=j)
+#     resultText = checkJokbo(debugDeck[i])
+#     Label(window, text=resultText[0] + "\nscore : " + str(resultText[1]), width=15).grid(row=i,column=7)
+
+# window.mainloop()
+
 '''
 print(checkJokbo(testDeck10))
 print("정상적으로는 로얄(A)스트레이트 플러쉬 / 점수 : 913") # 성공
@@ -47,9 +79,9 @@ print(checkJokbo(testDeck3))
 print("정상적으로는 Q플러쉬 / 점수 : 611") # 성공
 print()
 '''
-print(checkJokbo(testDeck4))
-print("정상적으로는 J스트레이트 / 점수 : 913") # 성공
-print()
+# print(checkJokbo(testDeck4))
+# print("정상적으로는 J스트레이트 / 점수 : 913") # 성공
+# print()
 '''
 print(checkJokbo(testDeck5))
 print("정상적으로는 6트리플 / 점수:405") # 성공
@@ -64,7 +96,7 @@ print(checkJokbo(testDeck7))
 print("정상적으로는 K노페어 / 점수:112") # 성공
 print()
 '''
-'''
+
 deck = [x for x in range(52)] # 카드 덱 생성
 cardImgs = [] # 카드 이미지 객체 저장할 이차원 리스트 생성 (GUI용)
 
@@ -87,4 +119,3 @@ for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
 
 
 window.mainloop() # GUI 실행
-'''

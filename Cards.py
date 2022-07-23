@@ -78,7 +78,7 @@ class Cards:
         for card in deck:
             numList.append(card // 4)
             
-        if 13 in numList: # 12가 A
+        if 0 in numList:
             return 13
         else:
             return max(numList)

@@ -4,7 +4,8 @@ import tkinter.simpledialog
 from PIL import ImageTk, Image
 from Cards import *
 from money import *
-from CheckJokbo import checkJokbo
+from CheckJokbo import checkJokbo, getKicker
+from gameSetting import Setting
 
 class GameProcess:
     # 상위 클래스 display를 받아옴
@@ -24,6 +25,8 @@ class GameProcess:
         self.Betting = False
 
         # 현재 턴에서 배팅이 진행되어야(self.Betting = True를 만족해야) 다음 턴으로 진행할 수 있는 구조
+
+        self.setting = Setting(self)
 
 
 
@@ -93,6 +96,8 @@ class GameProcess:
             self.display.myCardImgs[i].config(image=newImage)
         self.display.newGameBtn.config(text="새 게임", command=self.confirmRestartGame, bg="yellow")
         self.display.makeButtonsDefault()
+
+        
         
         
 
@@ -135,8 +140,8 @@ class GameProcess:
         myJokbo, self.myScore = checkJokbo(myFinalCards)
         cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
         self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
-        myKicker = self.CardDeck.getMyKicker()
-        cpuKicker = self.CardDeck.getCpuKicker()
+        myKicker = getKicker(self.CardDeck.getMyDeckCards())
+        cpuKicker = getKicker(self.CardDeck.getCpuDeckCards())
 
         # 내 점수가 높으면 승리
         if self.myScore > self.cpuScore:
@@ -148,6 +153,7 @@ class GameProcess:
         
         # 점수가 동점이면 키커 비교
         else:
+
             # 내 키커가 더 높으면 승리
             if myKicker > cpuKicker:
                 myJokbo += " | 키커 : " + str(self.changeCardNumber(myKicker))
@@ -211,10 +217,10 @@ class GameProcess:
     def gameSet(self):
         if self.myMoneyInfo.getMoney() <= 0:
             tkinter.messagebox.showinfo("파산", "소지 금액을 모두 잃었으므로 게임에서 패배하였습니다.")
-            self.display.newGameBtn.config(text="게임 초기화", command=self.confirmInitMoney, bg="red", fg="white")
+            self.display.newGameBtn.config(text="게임 초기화", command=self.setting.confirmInitMoney, bg="red", fg="white")
         elif self.cpuMoneyInfo.getMoney() <= 0:
             tkinter.messagebox.showinfo("승리", "상대방의 소지 금액이 모두 소진되어 게임에서 승리하였습니다.")
-            self.display.newGameBtn.config(text="게임 초기화", command=self.confirmInitMoney, bg="red", fg="white")
+            self.display.newGameBtn.config(text="게임 초기화", command=self.setting.confirmInitMoney, bg="red", fg="white")
         else:
             self.display.newGameBtn.config(text="새 게임", command=self.confirmInitGame, bg="yellow")
 

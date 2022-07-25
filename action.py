@@ -6,6 +6,15 @@ from CheckJokbo import checkJokbo, getKicker
 class GameAction:
     def __init__(self, window):
         self.window = window
+        self.win = 1
+    
+    def playerFoldGame(self):
+        self.win = 1
+        self.foldGame()
+
+    def cpuFoldGame(self):
+        self.win = 2
+        self.foldGame()
 
     # 사용자가 폴드 했을 때 실행되는 코드
     def foldGame(self):
@@ -35,12 +44,20 @@ class GameAction:
         self.window.myMessage.configure(text = myJokbo)
         self.window.cpuMessage.configure(text = cpuJokbo)
         self.totalBetting = self.window.game.cpuMoneyInfo.getTotalBetting() + self.window.game.myMoneyInfo.getTotalBetting()
-        self.window.game.cpuMoneyInfo.addMoney(self.totalBetting)
-        self.window.game.myMoneyInfo.newGame()
-        self.window.game.cpuMoneyInfo.newGame()
-        self.window.updateInfo()
-        tkinter.messagebox.showinfo("폴드", "상대방이 " + str(self.totalBetting) + "을 가져갑니다.")
-        self.window.game.gameSet()
+        if self.win == 1:
+            self.window.game.cpuMoneyInfo.addMoney(self.totalBetting)
+            self.window.game.myMoneyInfo.newGame()
+            self.window.game.cpuMoneyInfo.newGame()
+            self.window.updateInfo()
+            tkinter.messagebox.showinfo("폴드", "상대방이 " + str(self.totalBetting) + "을 가져갑니다.")
+            self.window.game.gameSet()
+        else:
+            self.window.game.myMoneyInfo.addMoney(self.totalBetting)
+            self.window.game.myMoneyInfo.newGame()
+            self.window.game.cpuMoneyInfo.newGame()
+            self.window.updateInfo()
+            tkinter.messagebox.showinfo("폴드", "당신이 " + str(self.totalBetting) + "을 가져갑니다.")
+            self.window.game.gameSet()
 
     # 현재 폴드가 가능한지 확인 후 사용자에게 정말로 폴드할 것인지 재확인
     def confirmFoldGame(self):
@@ -49,7 +66,7 @@ class GameAction:
             return
         foldGame = tkinter.messagebox.askokcancel("폴드", "이번 게임을 폴드하시겠습니까?")
         if foldGame:
-            self.foldGame()
+            self.playerFoldGame()
 
     # 사용자가 올인했을 때 실행되는 코드
     def AllInGame(self):

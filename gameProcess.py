@@ -6,6 +6,8 @@ from Cards import *
 from money import *
 from CheckJokbo import checkJokbo, getKicker
 from gameSetting import Setting
+from turnProgress import TurnProgress
+from cpuTest import PrototypeAI
 
 class GameProcess:
     # 상위 클래스 display를 받아옴
@@ -27,6 +29,8 @@ class GameProcess:
         # 현재 턴에서 배팅이 진행되어야(self.Betting = True를 만족해야) 다음 턴으로 진행할 수 있는 구조
 
         self.setting = Setting(self)
+
+        self.AI = PrototypeAI()
 
 
 

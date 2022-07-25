@@ -3,7 +3,6 @@ from CheckJokbo import checkJokbo
 class PrototypeAI:
     def __init__(self):
         self.nowDeck = []
-        self.decision = 0
         
     def initCard(self):
         self.nowDeck = []
@@ -11,4 +10,10 @@ class PrototypeAI:
     def decision(self, newCard, playerBetting):
         self.nowDeck.append(newCard)
         jokbo, score = checkJokbo(self.nowDeck)
-        return self.decision
+        if playerBetting == 0:
+            return 0
+        else:
+            if score >= 100:
+                return playerBetting
+            else:
+                return -1

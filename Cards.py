@@ -67,22 +67,6 @@ class Cards:
     def getCommonDeckCards(self):
         return self.commonDeckCards
 
-    def getMyKicker(self):
-        return self.getKicker(self.myDeckCards)
-
-    def getCpuKicker(self):
-        return self.getKicker(self.cpuDeckCards)
-
-    def getKicker(self, deck):
-        numList = []
-        for card in deck:
-            numList.append(card // 4)
-            
-        if 0 in numList:
-            return 13
-        else:
-            return max(numList)
-
 
         
 

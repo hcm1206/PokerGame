@@ -76,7 +76,7 @@ class Display:
         # 메뉴 목록 구성
         mainMenu.add_cascade(label="게임 설정", menu=subMenu)
         subMenu.add_command(label="게임 초기화", command=self.game.confirmInitMoney)
-        subMenu.add_command(label="블라인드 설정", command=self.game.settingBlind)
+        subMenu.add_command(label="블라인드 설정", command=self.game.setting.settingBlind)
 
         # CPU의 정보 창
         self.cpuMoney = Label(self.cpuInfoFrame, text="상대의 총액 : " + str(self.game.cpuMoneyInfo.getMoney()), width=20)

@@ -256,3 +256,13 @@ def getScore(deck):
         return score
     score = noPair(deck)
     return score
+
+def getKicker(deck):
+    numList = []
+    for card in deck:
+        numList.append(card // 4)
+        
+    if 0 in numList:
+        return 13
+    else:
+        return max(numList)

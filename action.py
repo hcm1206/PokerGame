@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter.messagebox
 import tkinter.simpledialog
-from CheckJokbo import checkJokbo
+from CheckJokbo import checkJokbo, getKicker
 
 class GameAction:
     def __init__(self, window):
@@ -28,8 +28,8 @@ class GameAction:
         myJokbo, myScore = checkJokbo(myFinalCards)
         cpuJokbo, cpuScore = checkJokbo(cpuFinalCards)
         if myScore == cpuScore:
-            myKicker = self.window.game.CardDeck.getMyKicker()
-            cpuKicker = self.window.game.CardDeck.getCpuKicker()
+            myKicker = getKicker(self.window.game.CardDeck.getMyDeckCards())
+            cpuKicker = getKicker(self.window.game.CardDeck.getCpuDeckCards())
             myJokbo += " | 키커 : " + str(self.window.game.changeCardNumber(myKicker))
             cpuJokbo += " | 키커 : " + str(self.window.game.changeCardNumber(cpuKicker))
         self.window.myMessage.configure(text = myJokbo)

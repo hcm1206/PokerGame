@@ -6,7 +6,6 @@ from Cards import *
 from money import *
 from CheckJokbo import checkJokbo, getKicker
 from gameSetting import Setting
-from turnProgress import TurnProgress
 from cpuTest import PrototypeAI
 
 class GameProcess:
@@ -30,7 +29,7 @@ class GameProcess:
 
         self.setting = Setting(self)
 
-        self.AI = PrototypeAI()
+        self.AI = PrototypeAI(self)
 
 
 
@@ -70,6 +69,8 @@ class GameProcess:
         self.CardDeck.initDeck()
         self.display.updateCard()
 
+        self.AI.initCard()
+
 
         for i in range(5):
             newImage = self.display.backCard
@@ -98,6 +99,9 @@ class GameProcess:
         for i in range(2):
             newImage = self.display.myCards[i]
             self.display.myCardImgs[i].config(image=newImage)
+        
+            self.AI.addCard(self.CardDeck.getCpuDeckCards()[i])
+
         self.display.newGameBtn.config(text="새 게임", command=self.confirmRestartGame, bg="yellow")
         self.display.makeButtonsDefault()
 
@@ -119,11 +123,16 @@ class GameProcess:
                 newImage = self.display.commonCards[i]
                 self.display.commonCardImgs[i].config(image=newImage)
                 self.display.commonCardImgs[i].image = newImage
+
+                self.AI.addCard(self.CardDeck.getCommonDeckCards()[i])
+
         # 현재 3턴 또는 4턴이면 공용카드 1장 공개
         else:
             newImage = self.display.commonCards[self.turn]
             self.display.commonCardImgs[self.turn].config(image=newImage)
             self.display.commonCardImgs[self.turn].image = newImage
+
+            self.AI.addCard(self.CardDeck.getCommonDeckCards()[self.turn])
 
     # 게임 결과 보기 (5턴)
     def resultGame(self):

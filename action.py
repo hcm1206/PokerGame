@@ -6,14 +6,15 @@ from CheckJokbo import checkJokbo, getKicker
 class GameAction:
     def __init__(self, window):
         self.window = window
-        self.win = 1
+        self.PlayerFold = True
     
     def playerFoldGame(self):
-        self.win = 1
+        self.PlayerFold = True
         self.foldGame()
 
     def cpuFoldGame(self):
-        self.win = 2
+        self.PlayerFold = False
+        tkinter.messagebox.showinfo("폴드", "상대방이 폴드를 선언했습니다.")
         self.foldGame()
 
     # 사용자가 폴드 했을 때 실행되는 코드
@@ -44,7 +45,7 @@ class GameAction:
         self.window.myMessage.configure(text = myJokbo)
         self.window.cpuMessage.configure(text = cpuJokbo)
         self.totalBetting = self.window.game.cpuMoneyInfo.getTotalBetting() + self.window.game.myMoneyInfo.getTotalBetting()
-        if self.win == 1:
+        if self.PlayerFold:
             self.window.game.cpuMoneyInfo.addMoney(self.totalBetting)
             self.window.game.myMoneyInfo.newGame()
             self.window.game.cpuMoneyInfo.newGame()
@@ -70,21 +71,24 @@ class GameAction:
 
     # 사용자가 올인했을 때 실행되는 코드
     def AllInGame(self):
-        self.window.game.turn = 5
-        self.window.game.myMoneyInfo.allIn(self.window.game.cpuMoneyInfo)
-        # self.window.game.cpuMoneyInfo.allIn()
-        self.window.updateInfo()
-        self.window.game.Betting = True
-        for i in range(5):
-            newImage = self.window.commonCards[i]
-            self.window.commonCardImgs[i].config(image=newImage)
-            self.window.commonCardImgs[i].image = newImage
-        for i in range(2):
-            newImage = self.window.cpuCards[i]
-            self.window.cpuCardImgs[i].config(image=newImage)
-            self.window.cpuCardImgs[i].image = newImage
-        self.window.newGameBtn.config(text="결과 정산", command=self.window.game.endGame, bg="lime")
-        self.window.makeButtonsGray()
+        if self.window.game.AI.allInReply():
+            self.window.game.turn = 5
+            self.window.game.myMoneyInfo.allIn(self.window.game.cpuMoneyInfo)
+            # self.window.game.cpuMoneyInfo.allIn()
+            self.window.updateInfo()
+            self.window.game.Betting = True
+            for i in range(5):
+                newImage = self.window.commonCards[i]
+                self.window.commonCardImgs[i].config(image=newImage)
+                self.window.commonCardImgs[i].image = newImage
+            for i in range(2):
+                newImage = self.window.cpuCards[i]
+                self.window.cpuCardImgs[i].config(image=newImage)
+                self.window.cpuCardImgs[i].image = newImage
+            self.window.newGameBtn.config(text="결과 정산", command=self.window.game.endGame, bg="lime")
+            self.window.makeButtonsGray()
+        else:
+            self.cpuFoldGame()
 
     # 현재 올인이 가능한지 확인 후 사용자에게 정말 올인할 것인지 재확인
     def confirmAllInGame(self):
@@ -137,17 +141,23 @@ class GameAction:
                         continue
             except:
                 return
-        
-        self.window.game.myMoneyInfo.addBetting(BettingAmount)
-        self.window.game.cpuMoneyInfo.addBetting(BettingAmount)
-        self.window.updateInfo()
-        self.window.game.Betting = True
-        if self.window.game.turn >= 4:
-            self.window.newGameBtn.config(text="결과 보기", command=self.window.game.resultGame, bg="lime")
-            self.window.makeButtonsGray()
-            self.window.game.turn = 5
-            return
-        self.window.game.nextGame()
+
+        if self.window.game.AI.bettingReply(BettingAmount):
+            self.window.game.myMoneyInfo.addBetting(BettingAmount)
+            if self.window.game.cpuMoneyInfo.getMoney() >= BettingAmount:
+                self.window.game.cpuMoneyInfo.addBetting(BettingAmount)
+            else:
+                self.window.game.cpuMoneyInfo.addBetting(self.window.game.cpuMoneyInfo.getMoney())
+            self.window.updateInfo()
+            self.window.game.Betting = True
+            if self.window.game.turn >= 4:
+                self.window.newGameBtn.config(text="결과 보기", command=self.window.game.resultGame, bg="lime")
+                self.window.makeButtonsGray()
+                self.window.game.turn = 5
+                return
+            self.window.game.nextGame()
+        else:
+            self.cpuFoldGame()
 
     # 사용자가 체크시 실행할 코드
     def checkGame(self):

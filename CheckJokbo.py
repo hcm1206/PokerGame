@@ -257,12 +257,24 @@ def getScore(deck):
     score = noPair(deck)
     return score
 
-def getKicker(deck):
+def getKicker(deck, score):
     numList = []
+    scoreNum = score % 100 - 1
+    if scoreNum == 13:
+        scoreNum = 0
+    result = -1
     for card in deck:
         numList.append(card // 4)
+
         
     if 0 in numList:
-        return 13
+        if scoreNum == 0:
+            result = min(numList)
+        else:
+            result = 13
     else:
-        return max(numList)
+        result = max(numList)
+        if scoreNum == result:
+            result = min(numList)
+
+    return result

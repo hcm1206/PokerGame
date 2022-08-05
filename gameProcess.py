@@ -153,8 +153,8 @@ class GameProcess:
         myJokbo, self.myScore = checkJokbo(myFinalCards)
         cpuJokbo, self.cpuScore = checkJokbo(cpuFinalCards)
         self.totalBetting = self.cpuMoneyInfo.getTotalBetting() + self.myMoneyInfo.getTotalBetting()
-        myKicker = getKicker(self.CardDeck.getMyDeckCards())
-        cpuKicker = getKicker(self.CardDeck.getCpuDeckCards())
+        myKicker = getKicker(self.CardDeck.getMyDeckCards(), self.myScore)
+        cpuKicker = getKicker(self.CardDeck.getCpuDeckCards(), self.myScore)
 
         # 내 점수가 높으면 승리
         if self.myScore > self.cpuScore:

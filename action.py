@@ -38,8 +38,8 @@ class GameAction:
         myJokbo, myScore = checkJokbo(myFinalCards)
         cpuJokbo, cpuScore = checkJokbo(cpuFinalCards)
         if myScore == cpuScore:
-            myKicker = getKicker(self.window.game.CardDeck.getMyDeckCards())
-            cpuKicker = getKicker(self.window.game.CardDeck.getCpuDeckCards())
+            myKicker = getKicker(self.window.game.CardDeck.getMyDeckCards(), myScore)
+            cpuKicker = getKicker(self.window.game.CardDeck.getCpuDeckCards(), cpuScore)
             myJokbo += " | 키커 : " + str(self.window.game.changeCardNumber(myKicker))
             cpuJokbo += " | 키커 : " + str(self.window.game.changeCardNumber(cpuKicker))
         self.window.myMessage.configure(text = myJokbo)

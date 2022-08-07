@@ -12,14 +12,18 @@ class PrototypeAI:
         self.nowDeck.append(newCard)
     
     def bettingReply(self, playerBetting):
+        comDeck = self.nowDeck[2:]
         jokbo, score = checkJokbo(self.nowDeck)
+        comJokbo, comScore = checkJokbo(comDeck)
+        print(jokbo, score)
+        print(comJokbo, comScore)
         if self.game.turn == 1:
             if sum(self.nowDeck) >= 30 or score >= 200:
                 return True
             else:
                 return False
         elif self.game.turn == 4 and playerBetting >= 1000:
-            if score >= 300:
+            if (score >= 300 and comScore < 300) or score >= 500:
                 return True
             else:
                 return False

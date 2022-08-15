@@ -80,13 +80,15 @@ class Display:
 
         # CPU의 정보 창
         self.cpuMoney = Label(self.cpuInfoFrame, text="상대의 총액 : " + str(self.game.cpuMoneyInfo.getMoney()), width=20)
-        self.cpuBetting = Label(self.cpuInfoFrame, text="상대의 배팅액 : " + str(self.game.cpuMoneyInfo.getTotalBetting()), width=20)
+        self.cpuNowBetting = Label(self.cpuInfoFrame, text="상대의 이번 베팅액 : " + str(self.game.myMoneyInfo.getMinimumBetting()), width=20)
+        self.cpuBetting = Label(self.cpuInfoFrame, text="상대의 베팅액 : " + str(self.game.cpuMoneyInfo.getTotalBetting()), width=20)
         self.cpuMoney.grid(row=0,column=0)
-        self.cpuBetting.grid(row=0,column=1)
+        self.cpuNowBetting.grid(row=0,column=1)
+        self.cpuBetting.grid(row=0,column=2)
         # 사용자의 정보 창
         self.myMoney = Label(self.myInfoFrame, text="당신의 총액 : " + str(self.game.myMoneyInfo.getMoney()), width=20)
         self.nowBlind = Label(self.myInfoFrame, text="블라인드 : " + str(self.game.myMoneyInfo.getBlindAmount()), width=20)
-        self.myBetting = Label(self.myInfoFrame, text="당신의 배팅액 : " + str(self.game.myMoneyInfo.getTotalBetting()), width=20)
+        self.myBetting = Label(self.myInfoFrame, text="당신의 베팅액 : " + str(self.game.myMoneyInfo.getTotalBetting()), width=20)
         self.myMoney.grid(row=0,column=0)
         self.nowBlind.grid(row=0,column=1)
         self.myBetting.grid(row=0,column=2)
@@ -100,7 +102,7 @@ class Display:
         self.newGameBtn.grid(row=0,column=0)
         self.foldBtn = Button(self.buttonFrame, text="폴드", bg="lightgray", command=GameAction(self).confirmFoldGame)
         self.foldBtn.grid(row=0,column=1)
-        self.BettingBtn = Button(self.buttonFrame, text="배팅", bg="lightgray", command=GameAction(self).BettingMoney)
+        self.BettingBtn = Button(self.buttonFrame, text="베팅", bg="lightgray", command=GameAction(self).BettingMoney)
         self.BettingBtn.grid(row=0,column=2)
         self.checkBtn = Button(self.buttonFrame, text="체크", bg="lightgray", command=GameAction(self).confirmCheckGame)
         self.checkBtn.grid(row=0,column=3)
@@ -112,7 +114,7 @@ class Display:
         # 기본 UI 배경색 설정
         self.defaultbg = self.cpuInfoFrame.cget('bg')
         
-        # 게임 시작할 때 기준 게임 정보(초기 배팅액, 블라인드 등) 갱신
+        # 게임 시작할 때 기준 게임 정보(초기 베팅액, 블라인드 등) 갱신
         self.updateInfo()
         
 
@@ -187,10 +189,11 @@ class Display:
     def updateInfo(self):
         # CPU의 정보 창
         self.cpuMoney.config(text="상대의 총액 : " + str(self.game.cpuMoneyInfo.getMoney()))
-        self.cpuBetting.config(text="상대의 배팅액 : " + str(self.game.cpuMoneyInfo.getTotalBetting()))
+        self.cpuNowBetting.config(text="상대의 이번 베팅액 : " + str(self.game.myMoneyInfo.getMinimumBetting()))
+        self.cpuBetting.config(text="상대의 베팅액 : " + str(self.game.cpuMoneyInfo.getTotalBetting()))
         # 사용자의 정보 창
         self.myMoney.config(text="당신의 총액 : " + str(self.game.myMoneyInfo.getMoney()))
-        self.myBetting.config(text="당신의 배팅액 : " + str(self.game.myMoneyInfo.getTotalBetting()))
+        self.myBetting.config(text="당신의 베팅액 : " + str(self.game.myMoneyInfo.getTotalBetting()))
         self.nowBlind.config(text="블라인드 : " + str(self.game.myMoneyInfo.getBlindAmount()))
 
 

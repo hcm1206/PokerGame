@@ -90,6 +90,7 @@ class GameAction:
         else:
             self.cpuFoldGame()
 
+
     # 현재 올인이 가능한지 확인 후 사용자에게 정말 올인할 것인지 재확인
     def confirmAllInGame(self):
         if (1 > self.window.game.turn or self.window.game.turn > 4):
@@ -112,17 +113,17 @@ class GameAction:
 
     
 
-    # 현재 배팅이 가능한지 확인 후 사용자에게 알맞은 배팅 값을 입력받아 배팅 진행
+    # 현재 베팅이 가능한지 확인 후 사용자에게 알맞은 베팅 값을 입력받아 베팅 진행
     def BettingMoney(self):
         if 1 > self.window.game.turn or self.window.game.turn > 4:
-            tkinter.messagebox.showwarning("알림", "게임 진행 중에만 배팅이 가능합니다.")
+            tkinter.messagebox.showwarning("알림", "게임 진행 중에만 베팅이 가능합니다.")
             return
-        # 사용자가 알맞은 배팅액을 입력할 때까지 무한 루프
+        # 사용자가 알맞은 베팅팅액을 입력할 때까지 무한 루프
         while(1):
-            BettingAmount = tkinter.simpledialog.askinteger("배팅액 입력", "배팅액을 입력하세요")
+            BettingAmount = tkinter.simpledialog.askinteger("베팅액 입력", "베팅액을 입력하세요")
             try:
                 if int(BettingAmount) < self.window.game.myMoneyInfo.getMinimumBetting():
-                    tkinter.messagebox.showwarning("알림", "최소 " + str(self.window.game.myMoneyInfo.getMinimumBetting()) + "이상 배팅하셔야 합니다.")
+                    tkinter.messagebox.showwarning("알림", "최소 " + str(self.window.game.myMoneyInfo.getMinimumBetting()) + "이상 베팅하셔야 합니다.")
                     continue
                 elif BettingAmount == 0:
                     self.confirmCheckGame()
@@ -134,7 +135,7 @@ class GameAction:
                     tkinter.messagebox.showwarning("알림", "현재 소지 금액을 초과하였습니다.")
                     continue
                 else:
-                    confirmBetting = tkinter.messagebox.askokcancel("배팅", str(BettingAmount) + "을 배팅하시겠습니까?")
+                    confirmBetting = tkinter.messagebox.askokcancel("베팅", str(BettingAmount) + "을 베팅하시겠습니까?")
                     if confirmBetting:
                         break
                     else:
@@ -161,13 +162,49 @@ class GameAction:
 
     # 사용자가 체크시 실행할 코드
     def checkGame(self):
-        self.window.game.Betting = True
-        if self.window.game.turn >= 4:
-            self.window.newGameBtn.config(text="결과 보기", command=self.window.game.resultGame, bg="lime")
-            self.window.makeButtonsGray()
-            self.window.game.turn = 5
+        if self.window.game.myMoneyInfo.getMinimumBetting():
+            tkinter.messagebox.showwarning("알림", "최소 " + str(self.window.game.myMoneyInfo.getMinimumBetting()) + "이상 베팅하셔야 합니다.")
             return
-        self.window.game.nextGame()
+        AIBetting = self.window.game.AI.whetherBetting()
+        if not AIBetting:
+            self.window.game.Betting = True
+            if self.window.game.turn >= 4:
+                self.window.newGameBtn.config(text="결과 보기", command=self.window.game.resultGame, bg="lime")
+                self.window.makeButtonsGray()
+                self.window.game.turn = 5
+                return
+            self.window.game.nextGame()
+        else:
+            self.window.game.myMoneyInfo.setMinimumBetting(AIBetting)
+            if self.window.game.cpuMoneyInfo.getMoney() > AIBetting:
+                tkinter.messagebox.showinfo("베팅", "상대방이 " + str(AIBetting) + "을 베팅했습니다.")
+                self.window.updateInfo()
+            else:
+                self.cpuAllInGame()
+                
+
+    def cpuAllInGame(self):
+        tkinter.messagebox.showinfo("올인", "상대방이 올인했습니다.")
+        replyAllIn = tkinter.messagebox.askokcancel("올인", "상대의 올인에 대응하여 베팅하시겠습니까?")
+        if replyAllIn:
+            self.window.game.turn = 5
+            self.window.game.myMoneyInfo.allIn(self.window.game.cpuMoneyInfo)
+            self.window.updateInfo()
+            self.window.game.AIBetting = True
+            for i in range(5):
+                newImage = self.window.commonCards[i]
+                self.window.commonCardImgs[i].config(image=newImage)
+                self.window.commonCardImgs[i].image = newImage
+            for i in range(2):
+                newImage = self.window.cpuCards[i]
+                self.window.cpuCardImgs[i].config(image=newImage)
+                self.window.cpuCardImgs[i].image = newImage
+            self.window.newGameBtn.config(text="결과 정산", command=self.window.game.endGame, bg="lime")
+            self.window.makeButtonsGray()
+        else:
+            self.foldGame()
+
+
     
     # 현재 체크가 가능한지 확인 후 사용자에게 정말 체크할 것인지 재확인
     def confirmCheckGame(self):

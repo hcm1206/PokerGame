@@ -24,6 +24,7 @@ class GameProcess:
         self.turn = 0
         # 현재 턴에 배팅 과정이 진행되었는지 여부 판단하는 변수
         self.Betting = False
+        self.AIBetting = False
 
         # 현재 턴에서 배팅이 진행되어야(self.Betting = True를 만족해야) 다음 턴으로 진행할 수 있는 구조
 
@@ -92,6 +93,7 @@ class GameProcess:
     def startGame(self):
         self.turn = 1
         self.Betting = False
+        self.AIBetting = False
         self.cpuMoneyInfo.blind()
         self.myMoneyInfo.blind()
         self.display.updateInfo()
@@ -116,6 +118,9 @@ class GameProcess:
             return
         self.turn += 1
         self.Betting = False
+        self.AIBetting = False
+        self.myMoneyInfo.setMinimumBetting(0)
+        self.display.updateInfo()
 
         # 현재 2턴이면 공용카드 3장 공개
         if self.turn == 2:
@@ -138,7 +143,10 @@ class GameProcess:
     def resultGame(self):
         self.turn = 5
         self.Betting = False
+        self.AIBetting = False
         self.display.newGameBtn.config(text="결과 정산", command=self.endGame, bg="lime")
+        self.myMoneyInfo.setMinimumBetting(0)
+        self.display.updateInfo()
 
         for i in range(2):
             newImage = self.display.cpuCards[i]
@@ -249,31 +257,3 @@ class GameProcess:
         initGame = tkinter.messagebox.askokcancel("게임 초기화", "현재 게임 진행 및 잔금을 초기화하시겠습니까?")
         if initGame:
             self.initMoney()
-
-
-
-    # 블라인드 설정하는 메소드
-    # 최소 블라인드와 최대 블라인드 적용 기준은 어떻게 해야 할지 토의 필요
-    def settingBlind(self):
-        while(1):
-            newBlind = tkinter.simpledialog.askinteger("블라인드 설정", "설정할 블라인드 액수를 입력하세요")
-            try:
-                if int(newBlind) < 100:
-                    tkinter.messagebox.showwarning("알림", "설정 가능한 블라인드의 최소액은 100입니다.")
-                    continue
-                elif int(newBlind) > 5000:
-                    tkinter.messagebox.showwarning("알림", "설정 가능한 블라인드의 최대액은 5000입니다.")
-                    continue
-                else:
-                    confirmBetting = tkinter.messagebox.askokcancel("블라인드 설정", "블라인드로 " + str(newBlind) + "을 설정하시겠습니까?")
-                    if confirmBetting:
-                        break
-                    else:
-                        continue
-            except:
-                return
-        self.cpuMoneyInfo.setBlind(newBlind)
-        self.myMoneyInfo.setBlind(newBlind)
-        self.display.updateInfo()
-        if self.turn != 0:
-            tkinter.messagebox.showinfo("알림", "다음 게임부터 " + str(newBlind) + "의 블라인드가 적용됩니다.")

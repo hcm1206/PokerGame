@@ -31,6 +31,8 @@ testDeck7 = [46,38,31,20,13,11,1] # 노페어
 
 testDeck8 = [34,35,48,49,10,13,24] # 투페어
 
+testDeck11 = [21, 36, 37, 38, 49, 50, 51]
+
 debugDeck = []
 
 debugDeck.append([2,6,7,11,13,19,21])
@@ -44,9 +46,9 @@ debugDeck.append([8,9,11,13,24,25,26])
 debugDeck.append([1,3,4,6,11,32,50])
 
 
-for deck in debugDeck:
-    print(checkJokbo(deck)) # 5 스트레이트
-    print()
+# for deck in debugDeck:
+#     print(checkJokbo(deck)) # 5 스트레이트
+#     print()
 
 # cardImgs = []
 # for i in range(len(debugDeck)): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
@@ -97,25 +99,38 @@ print("정상적으로는 K노페어 / 점수:112") # 성공
 print()
 '''
 
-deck = [x for x in range(52)] # 카드 덱 생성
-cardImgs = [] # 카드 이미지 객체 저장할 이차원 리스트 생성 (GUI용)
+# deck = [x for x in range(52)] # 카드 덱 생성
+# cardImgs = [] # 카드 이미지 객체 저장할 이차원 리스트 생성 (GUI용)
 
-for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
-    random.shuffle(deck) # 덱 셔플
-    select = deck[0:7] # 셔플된 덱에서 7장 드로우하여 패 생성
-    select.sort() # 생성한 패를 정렬
-    # 이 아래는 GUI용 =======================================================
-    cardImgs.append([])
-    for j in range(len(select)):
-        cardImgs[i].append(Image.open("card\d"+str(select[j])+".png"))
-        cardImgs[i][j] = cardImgs[i][j].resize((width,height))
-        cardImgs[i][j] = ImageTk.PhotoImage(cardImgs[i][j])
-        Label(window, image=cardImgs[i][j]).grid(row=i,column=j)
-    resultText = checkJokbo(select)
-    Label(window, text=resultText[0] + "\nscore : " + str(resultText[1]), width=15).grid(row=i,column=7)
-    # 여기까지 GUI용 ========================================================
-    print(select) # 카드 번호 리스트 출력
-    print()
+# for i in range(5): # 랜덤으로 7장 선택한 5가지 패 (UI로 시각화)
+#     random.shuffle(deck) # 덱 셔플
+#     select = deck[0:7] # 셔플된 덱에서 7장 드로우하여 패 생성
+#     select.sort() # 생성한 패를 정렬
+#     # 이 아래는 GUI용 =======================================================
+#     cardImgs.append([])
+#     for j in range(len(select)):
+#         cardImgs[i].append(Image.open("card\d"+str(select[j])+".png"))
+#         cardImgs[i][j] = cardImgs[i][j].resize((width,height))
+#         cardImgs[i][j] = ImageTk.PhotoImage(cardImgs[i][j])
+#         Label(window, image=cardImgs[i][j]).grid(row=i,column=j)
+#     resultText = checkJokbo(select)
+#     Label(window, text=resultText[0] + "\nscore : " + str(resultText[1]), width=15).grid(row=i,column=7)
+#     # 여기까지 GUI용 ========================================================
+#     print(select) # 카드 번호 리스트 출력
+#     print()
 
 
-window.mainloop() # GUI 실행
+# window.mainloop() # GUI 실행
+
+
+
+cardImgs = []
+for i in range(len(testDeck11)):
+    cardImgs.append(Image.open("card\d"+str(testDeck11[i])+".png"))
+    cardImgs[i] = cardImgs[i].resize((width,height))
+    cardImgs[i] = ImageTk.PhotoImage(cardImgs[i])
+    Label(window, image=cardImgs[i]).grid(row=0,column=i)
+jokbo, score = checkJokbo(testDeck11)
+Label(window, text=jokbo + "\nscore : " + str(score), width=15).grid(row=0,column=7)
+
+window.mainloop()

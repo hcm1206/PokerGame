@@ -48,15 +48,11 @@ class GameProcess:
 
     # 게임 재시작 전 사용자에게 게임 재시작 여부 묻기
     def confirmInitGame(self):
+        if self.turn < 5:
+            tkinter.messagebox.showwarning("알림", "게임 진행 중에는 게임 재시작이 불가합니다.")
+            return
         gameQuit = tkinter.messagebox.askokcancel("새로운 게임 시작", "게임을 새로 시작하시겠습니까?")
         if gameQuit:
-            self.initGame()
-
-    def confirmRestartGame(self):
-        gameRestart = tkinter.messagebox.askokcancel("게임 재시작", "게임을 재시작 하시겠습니까?")
-        if gameRestart:
-            self.cpuMoneyInfo.addMoney(self.cpuMoneyInfo.getTotalBetting())
-            self.myMoneyInfo.addMoney(self.myMoneyInfo.getTotalBetting())
             self.initGame()
 
     # 게임 초기화 (0턴으로 돌리기)
@@ -104,7 +100,7 @@ class GameProcess:
         
             self.AI.addCard(self.CardDeck.getCpuDeckCards()[i])
 
-        self.display.newGameBtn.config(text="새 게임", command=self.confirmRestartGame, bg="yellow")
+        self.display.newGameBtn.config(text="새 게임", command=self.confirmInitGame, bg="lightgray")
         self.display.makeButtonsDefault()
 
         
@@ -247,12 +243,13 @@ class GameProcess:
 
 
 
-    
+    # 전체 게임 초기화(잔돈도 초기화)
     def initMoney(self):
         self.myMoneyInfo.initMoney()
         self.cpuMoneyInfo.initMoney()
         self.initGame()
     
+    # 전체 게임 초기화 여부 확인
     def confirmInitMoney(self):
         initGame = tkinter.messagebox.askokcancel("게임 초기화", "현재 게임 진행 및 잔금을 초기화하시겠습니까?")
         if initGame:

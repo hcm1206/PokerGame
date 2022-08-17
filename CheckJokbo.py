@@ -76,6 +76,7 @@ def fourCard(deck):
             score = 800 + i + 1
     return score
 
+# 풀하우스 체크
 def fullHouse(deck):
     deck.sort() # 먼저 입력받은 패를 정렬
     numList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성
@@ -86,18 +87,31 @@ def fullHouse(deck):
         numList.append(card // 4) # 패의 7장의 카드들의 숫자 저장
         # 나누기 연산을 해 숫자만 봄
 
-    for i in range(13): 
+    # 카드 숫자 전체 인덱스(A~K) 나열한 row 리스트
+    row = [0,1,2,3,4,5,6,7,8,9,10,11,12]
+
+    # 첫번째로 3장의 동일한 숫자가 있는지 확인
+    for i in row: 
         if(numList.count(i)==3):
             triple = True
             num = i
-        elif(numList.count(i)==2):
+            row.remove(num) # 동일한 숫자 3장이 있으면 그 숫자를 row 리스트에서 빼버림
+            break
+    # 1번째로 3장이 존재하는 숫자가 빠진 인덱스에서 다시 동일한 숫자 2장 이상이 존재하는지 확인
+    for i in row:
+        if(numList.count(i)>=2):
             pair = True
-        if (triple and pair):
-            score = 700 + num + 1
+            # 만약 동일한 숫자 3장이 하나 더 존재한다면 숫자 비교해서 큰 쪽을 점수 계산에 사용
+            if numList.count(i) == 3 and (i > num or i == 0):
+                print("true")
+                num = i
+
+    if (triple and pair):
+        score = 700 + num + 1
     return score
 
 
-# 플러시 체크 (플러시는 아직 숫자 판정 없음, 무조건 A로 판정)
+# 플러시 체크
 def flush(deck): # 패(7장의 카드 정보 리스트)를 입력받아 이 패가 스트레이트이면 True, 아니면 False 반환
     deck.sort() # 먼저 입력받은 패를 정렬
     shapeList = [] # 패에 있는 7장의 카드들의 숫자를 저장할 빈 리스트 생성

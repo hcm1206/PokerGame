@@ -182,7 +182,7 @@ class GameAction:
             else:
                 self.cpuAllInGame()
                 
-
+    # cpu가 올인했을 때 실행되는 코드
     def cpuAllInGame(self):
         tkinter.messagebox.showinfo("올인", "상대방이 올인했습니다.")
         replyAllIn = tkinter.messagebox.askokcancel("올인", "상대의 올인에 대응하여 베팅하시겠습니까?")

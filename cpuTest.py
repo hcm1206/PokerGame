@@ -61,10 +61,10 @@ class PrototypeAI:
             if comDeck:
                 if score > 300 and comScore < 300:
                     self.game.AIBetting = True
-                    return int(score/100)*500
+                    return int(score/100)*500 + self.randomMoneyAdd()
                 elif self.chance(score/5):
                     self.game.AIBetting = True
-                    return int(score/100)*500
+                    return int(score/100)*500 + self.randomMoneyAdd()
         return 0
 
 
@@ -73,3 +73,6 @@ class PrototypeAI:
             return True
         else:
             return False
+
+    def randomMoneyAdd(self):
+        return int(random.random() * 10) * 200 - 1000
